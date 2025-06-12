@@ -1,0 +1,87 @@
+﻿@model NguyenGiaHuy.SachOnline.Models.SACH
+
+@{
+    ViewBag.Title = "BookDetail";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+@if (Model == null)
+{
+    <div class="alert alert-danger text-center">
+        Không tìm thấy sách tương ứng.
+    </div>
+}
+else
+{
+    if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <style type="text/css">
+        .img {
+            width: 300px;
+            height: 450px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .tensach {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .motasach {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .giaban, .ngaycapnhat, .addtocard {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 18px;
+        }
+
+            .addtocard a {
+                font-size: 16px;
+            }
+    </style>
+
+    <h2 class="text-center">Chi tiết sản phẩm</h2>
+
+    <div class="thumbnail">
+        <h4 class="tensach">
+            @Model.TenSach
+        </h4>
+
+        <img src="~/Images/@Model.anhSP" alt="@Model.TenSach" class="img" />
+
+        <div class="motasach">
+            <strong>Mô tả:</strong>
+            <p>
+                @Html.Raw((Model.Mota ?? "Chưa có mô tả.").Replace("\n", "</p><p>&nbsp;&nbsp;&nbsp;&nbsp;"))
+            </p>
+        </div>
+
+        <p class="ngaycapnhat">
+            Ngày cập nhật: @Html.FormatValue(Model.NgayCapNhat, "{0:dd/MM/yyyy}")
+        </p>
+
+        <p class="giaban">
+            Giá bán: <span>@Html.FormatValue(Model.GiaBan, "{0:#,##0}") VNĐ</span>
+        </p>
+
+        <p class="addtocard">
+            <a href="@Url.Action("ThemGioHang", "GioHang", new { ms = Model.SachID, url = Request.Url.ToString() })" class="btn btn-primary">
+                <span class="glyphicon glyphicon-shopping-cart"></span> Add to Cart
+            </a>
+        </p>
+    </div>
+}

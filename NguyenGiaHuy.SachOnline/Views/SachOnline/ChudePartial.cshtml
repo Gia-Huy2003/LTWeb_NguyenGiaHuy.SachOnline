@@ -1,0 +1,16 @@
+﻿@model IEnumerable<NguyenGiaHuy.SachOnline.Models.CHUDE>
+
+<div class="text-center" style="background-color: #007bff; padding: 15px; border-radius: 5px; color: white; font-weight: bold; font-size: 13px;">
+    SÁCH THEO CHỦ ĐỀ
+</div>
+
+<ul class="list-group">
+    @foreach (var chude in Model)
+    {
+        <li class="list-group-item">
+            <a href="@Url.Action("SachTheoChuDe", "SachOnline", new { id = chude.ChuDeID })">
+                @chude.TenChuDe
+            </a>
+        </li>
+    }
+</ul>
