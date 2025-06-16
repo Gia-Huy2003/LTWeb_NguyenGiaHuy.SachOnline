@@ -1,0 +1,61 @@
+﻿@model List<NguyenGiaHuy.SachOnline.Models.DONDATHANG>
+
+@{
+    ViewBag.Title = "Đơn hàng của tôi";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<h2 style="text-align:center;">Đơn hàng của tôi</h2>
+
+@if (!Model.Any())
+{
+    <p>Bạn chưa có đơn hàng nào.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead style="background-color: #ccc; text-align:center;">
+            <tr>
+                <th>Mã đơn</th>
+                <th>Ngày đặt</th>
+                <th>Ngày giao</th>
+                <th>Tình trạng</th>
+                <th>Thanh toán</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr style="text-align:center;">
+                    <td>@item.DonDatHangID</td>
+                    <td>@(item.NgayDat?.ToString("dd/MM/yyyy"))</td>
+                    <td>@(item.NgayGiao.HasValue ? item.NgayGiao.Value.ToString("dd/MM/yyyy") : "Chưa giao")</td>
+                    <td>
+                        @if (item.TinhTrangDonHang.GetValueOrDefault())
+                        {
+                            <span class="text-success">Đã nhận</span>
+                        }
+                        else
+                        {
+                            <span class="text-warning">Chờ giao</span>
+                        }
+                    </td>
+                    <td>
+                        @(item.DaThanhToan.GetValueOrDefault() ? "✓" : "✗")
+                    </td>
+                    <td>
+                        @if (!item.TinhTrangDonHang.GetValueOrDefault())
+                        {
+                            @Html.ActionLink("✅ Đã nhận hàng", "XacNhanDaNhanHang", "GioHang", new { id = item.DonDatHangID }, new { @class = "btn btn-success btn-sm" })
+                        }
+                        else
+                        {
+                            <span>Đã xác nhận</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -23,10 +23,25 @@ namespace SachOnline.Controllers
         }
 
         // GET: SachOnline
-        public ActionResult Index()
+        public ActionResult Index(int page = 1)
         {
-            var listSachMoi = LaySachMoi(6);
-            return View(listSachMoi);
+            int pageSize = 6;
+            var allBooks = data.SACHes.OrderByDescending(s => s.NgayCapNhat);
+            var sachMoi = allBooks.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            var model = new SachListViewModel
+            {
+                Saches = sachMoi,
+                PagingInfo = new PagingInfo
+                {
+                    CurrentPage = page,
+                    ItemsPerPage = pageSize,
+                    TotalItems = allBooks.Count(),
+                    UrlPage = p => Url.Action("Index", new { page = p })
+                }
+            };
+
+            return View(model);
         }
 
         public ActionResult ChuDePartial()
@@ -57,6 +72,13 @@ namespace SachOnline.Controllers
             var sach = from s in data.SACHes where s.NhaXuatBanID == id select s;
             return View(sach);
         }
+
+        public ActionResult About()
+        {
+            ViewBag.Message = "Giới thiệu về Bookstore";
+            return View();
+        }
+
 
         public ActionResult BookDetail(int id)
         {

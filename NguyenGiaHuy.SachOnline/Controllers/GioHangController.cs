@@ -1,38 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using NguyenGiaHuy.SachOnline.Models;
+using NguyenGiaHuy.SachOnline.Services;
 
-namespace SachOnline.Controllers
+namespace NguyenGiaHuy.SachOnline.Controllers
 {
     public class GioHangController : Controller
     {
-        SachOnline1Entities1 dbSachOnlineDataContext;
-
-        public GioHangController()
-        {
-            dbSachOnlineDataContext = new SachOnline1Entities1();
-        }
-
-        public ActionResult ThemGioHang(int ms, string url)
-        {
-            List<GioHang> lstGioHang = LayGioHang();
-            GioHang sp = lstGioHang.Find(n => n.iSachID == ms);
-            if (sp == null)
-            {
-                sp = new GioHang(ms);
-                lstGioHang.Add(sp);
-                TempData["SuccessMessage"] = "Sản phẩm đã được thêm vào giỏ hàng.";
-            }
-            else
-            {
-                sp.iSoLuong++;
-            }
-
-            return Redirect(url);
-        }
+        SachOnline1Entities1 dbSachOnlineDataContext = new SachOnline1Entities1();
 
         private List<GioHang> LayGioHang()
         {
@@ -47,37 +24,46 @@ namespace SachOnline.Controllers
 
         private int TongSoLuong()
         {
-            int iTongSoLuong = 0;
-            List<GioHang> lstGioHang = Session["GioHang"] as List<GioHang>;
-            if (lstGioHang != null)
-            {
-                iTongSoLuong = lstGioHang.Sum(n => n.iSoLuong);
-            }
-            return iTongSoLuong;
+            return LayGioHang().Sum(n => n.iSoLuong);
         }
 
         private double TongTien()
         {
-            double dTongTien = 0;
-            List<GioHang> lstGioHang = Session["GioHang"] as List<GioHang>;
-            if (lstGioHang != null)
-            {
-                dTongTien = lstGioHang.Sum(n => n.dTongTien);
-            }
-            return dTongTien;
+            return LayGioHang().Sum(n => n.dTongTien);
+        }
+
+        public ActionResult ThemGioHang(int ms, string url)
+        {
+            var lstGioHang = LayGioHang();
+            var sp = lstGioHang.FirstOrDefault(n => n.iSachID == ms);
+            if (sp == null)
+                lstGioHang.Add(new GioHang(ms));
+            else
+                sp.iSoLuong++;
+            return Redirect(url);
         }
 
         public ActionResult GioHang()
         {
-            List<GioHang> lstGioHang = LayGioHang();
-            if (lstGioHang.Count == 0)
+            // Nếu chưa đăng nhập thì chuyển sang trang Đăng Nhập
+            if (Session["TaiKhoan"] == null)
+            {
+                return RedirectToAction("DangNhap", "SachOnline");
+            }
+
+            var lstGioHang = LayGioHang();
+
+            // Nếu giỏ hàng trống thì quay lại trang chủ
+            if (!lstGioHang.Any())
             {
                 return RedirectToAction("Index", "SachOnline");
             }
+
             ViewBag.TongSoLuong = TongSoLuong();
             ViewBag.TongTien = TongTien();
             return View(lstGioHang);
         }
+
 
         public ActionResult GioHangPartial()
         {
@@ -88,81 +74,78 @@ namespace SachOnline.Controllers
 
         public ActionResult XoaSPKhoiGioHang(int iSachID)
         {
-            List<GioHang> lstGioHang = LayGioHang();
-            GioHang sp = lstGioHang.SingleOrDefault(n => n.iSachID == iSachID);
-            if (sp != null)
-            {
-                lstGioHang.RemoveAll(n => n.iSachID == iSachID);
-                if (lstGioHang.Count == 0)
-                {
-                    return RedirectToAction("Index", "SachOnline");
-                }
-            }
+            var lstGioHang = LayGioHang();
+            lstGioHang.RemoveAll(n => n.iSachID == iSachID);
             return RedirectToAction("GioHang");
         }
 
         public ActionResult CapNhatGioHang(int iSachID, FormCollection f)
         {
-            List<GioHang> lstGioHang = LayGioHang();
-            GioHang sp = lstGioHang.SingleOrDefault(n => n.iSachID == iSachID);
-            if (sp != null)
-            {
-                sp.iSoLuong = int.Parse(f["txtSoLuong"].ToString());
-            }
+            var lstGioHang = LayGioHang();
+            var sp = lstGioHang.FirstOrDefault(n => n.iSachID == iSachID);
+            if (sp != null) sp.iSoLuong = int.Parse(f["txtSoLuong"]);
             return RedirectToAction("GioHang");
         }
 
         public ActionResult XoaGioHang()
         {
-            List<GioHang> lstGioHang = LayGioHang();
-            lstGioHang.Clear();
+            LayGioHang().Clear();
             return RedirectToAction("Index", "SachOnline");
         }
 
         [HttpGet]
         public ActionResult DatHang()
         {
-            if (Session["TaiKhoan"] == null || Session["TaiKhoan"].ToString() == "")
-            {
+            if (Session["TaiKhoan"] == null || Session["GioHang"] == null)
                 return RedirectToAction("DangNhap", "SachOnline");
-            }
 
-            if (Session["GioHang"] == null)
-            {
-                return RedirectToAction("Index", "SachOnline");
-            }
-
-            List<GioHang> lstGioHang = LayGioHang();
             ViewBag.TongSoLuong = TongSoLuong();
             ViewBag.TongTien = TongTien();
-            return View(lstGioHang);
+            return View(LayGioHang());
         }
 
         [HttpPost]
-        public ActionResult DatHang(FormCollection f)
+        [ActionName("DatHang")]
+        public ActionResult XuLyDatHang(FormCollection f)
         {
             KHACHHANG kh = (KHACHHANG)Session["TaiKhoan"];
-            DONDATHANG ddh = new DONDATHANG();
-            List<GioHang> lstGioHang = LayGioHang();
-            ddh.KhachHangID = kh.KhachHangID;
-            ddh.NgayDat = DateTime.Now;
-            var NgayGiao = String.Format("{0:MM/dd/yyyy}", f["NgayGiao"]);
-            ddh.NgayGiao = DateTime.Parse(NgayGiao);
-            ddh.TinhTrangDonHang = false;
-            ddh.DaThanhToan = false;
+            DONDATHANG ddh = new DONDATHANG
+            {
+                KhachHangID = kh.KhachHangID,
+                NgayDat = DateTime.Now,
+                NgayGiao = DateTime.Parse(f["NgayGiao"]),
+                TinhTrangDonHang = false,
+                DaThanhToan = false
+            };
             dbSachOnlineDataContext.DONDATHANGs.Add(ddh);
             dbSachOnlineDataContext.SaveChanges();
 
-            foreach (var item in lstGioHang)
+            foreach (var item in LayGioHang())
             {
-                CHITIETDATHANG ct = new CHITIETDATHANG();
-                ct.DonDatHangID = ddh.DonDatHangID;
-                ct.SachID = item.iSachID;
-                ct.SoLuong = item.iSoLuong;
-                ct.GiaTien = item.dGiaTien;
+                CHITIETDATHANG ct = new CHITIETDATHANG
+                {
+                    DonDatHangID = ddh.DonDatHangID,
+                    SachID = item.iSachID,
+                    SoLuong = item.iSoLuong,
+                    GiaTien = item.dGiaTien
+                };
                 dbSachOnlineDataContext.CHITIETDATHANGs.Add(ct);
             }
             dbSachOnlineDataContext.SaveChanges();
+
+            try
+            {
+                string email = kh.Email;
+                string tieuDe = "Xác nhận đơn hàng từ SachOnline";
+                string noiDung = $@"
+                    <h3>Xin chào {kh.TenKhachHang}!</h3>
+                    <p>Đơn hàng của bạn đã được tiếp nhận vào lúc {ddh.NgayDat:HH:mm dd/MM/yyyy}.</p>
+                    <p>Tổng tiền: <strong>{TongTien():N0} VND</strong></p>
+                    <p>Chúng tôi sẽ giao hàng trước ngày {ddh.NgayGiao:dd/MM/yyyy}.</p>";
+                new EmailService().SendOrderConfirmationEmail(email, tieuDe, noiDung);
+            }
+            catch (Exception) { }
+
             Session["GioHang"] = null;
             return RedirectToAction("XacNhanDonHang", "GioHang");
         }
@@ -170,6 +153,31 @@ namespace SachOnline.Controllers
         public ActionResult XacNhanDonHang()
         {
             return View();
+        }
+
+        public ActionResult DonHangCuaToi()
+        {
+            if (Session["TaiKhoan"] == null) return RedirectToAction("DangNhap", "SachOnline");
+            KHACHHANG kh = (KHACHHANG)Session["TaiKhoan"];
+            var donhang = dbSachOnlineDataContext.DONDATHANGs
+                .Where(d => d.KhachHangID == kh.KhachHangID)
+                .OrderByDescending(d => d.NgayDat)
+                .ToList();
+            return View(donhang);
+        }
+
+        public ActionResult XacNhanDaNhanHang(int id)
+        {
+            var donHang = dbSachOnlineDataContext.DONDATHANGs.FirstOrDefault(d => d.DonDatHangID == id);
+            if (donHang == null) return HttpNotFound();
+
+            donHang.TinhTrangDonHang = true;
+            donHang.DaThanhToan = true;
+            donHang.NgayGiao = DateTime.Now;
+            dbSachOnlineDataContext.SaveChanges();
+
+            TempData["ThongBao"] = $"Đã xác nhận đơn hàng #{id} là đã giao thành công.";
+            return RedirectToAction("DonHangCuaToi");
         }
     }
 }

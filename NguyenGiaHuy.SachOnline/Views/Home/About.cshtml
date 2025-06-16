@@ -1,7 +1,76 @@
-﻿@{ ViewBag.Title = "About"; }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
+﻿@{
+    ViewBag.Title = "Giới Thiệu";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
 
-    <p>Use this area to provide additional information.</p>
-</main>
+<style>
+    .about-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .about-container h2 {
+            color: #ff6600;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .about-container h3 {
+            color: #333;
+            margin-top: 30px;
+        }
+
+        .about-container p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #444;
+            text-align: justify;
+        }
+
+        .about-container ul {
+            list-style: square;
+            padding-left: 20px;
+        }
+
+    .highlight {
+        color: #ff6600;
+        font-weight: bold;
+    }
+</style>
+
+<div class="about-container">
+    <h2>Giới Thiệu Về BOOKSTORE</h2>
+
+    <p>
+        Chào mừng bạn đến với <span class="highlight">BOOKSTORE</span> – thế giới của tri thức và cảm hứng!
+    </p>
+
+    <p>
+        Chúng tôi là một website chuyên cung cấp các đầu sách đa dạng từ văn học, kỹ năng sống, sách thiếu nhi đến giáo trình chuyên ngành.
+        Với sứ mệnh <span class="highlight">"Mang sách đến gần hơn với mọi người"</span>, BOOKSTORE luôn nỗ lực tạo ra trải nghiệm mua sắm nhanh chóng, tiện lợi và thân thiện nhất.
+    </p>
+
+    <h3>Tại sao chọn chúng tôi?</h3>
+    <ul>
+        <li>Giao diện thân thiện, dễ sử dụng</li>
+        <li>Hàng nghìn đầu sách được cập nhật liên tục</li>
+        <li>Giao hàng nhanh chóng trên toàn quốc</li>
+        <li>Thanh toán linh hoạt: COD, chuyển khoản, ví điện tử</li>
+        <li>Chính sách đổi trả minh bạch</li>
+    </ul>
+
+    <h3>Thông Tin Liên Hệ</h3>
+    <p>
+        <strong>Email:</strong> chamsockhachhang@bookstore.vn<br />
+        <strong>Hotline:</strong> 0933735072<br />
+        <strong>Địa chỉ:</strong> 1Số 06 Trần Văn Ơn, phường Phú Hòa, thành phố Thủ Dầu Một, tỉnh Bình Dương
+    </p>
+
+    <p style="text-align:center; margin-top: 30px;">
+        <em>Cảm ơn bạn đã đồng hành cùng BOOKSTORE. Hãy để chúng tôi là cầu nối giữa bạn và thế giới tri thức!</em>
+    </p>
+</div>
