@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.ComponentModel;
 using NguyenGiaHuy.SachOnline.Models;
 
 namespace SachOnline.Controllers
@@ -22,7 +20,6 @@ namespace SachOnline.Controllers
             return data.SACHes.OrderByDescending(a => a.NgayCapNhat).Take(count).ToList();
         }
 
-        // GET: SachOnline
         public ActionResult Index(int page = 1)
         {
             int pageSize = 6;
@@ -44,6 +41,20 @@ namespace SachOnline.Controllers
             return View(model);
         }
 
+        public ActionResult IndexAdmin()
+        {
+            if (Session["TaiKhoanAdmin"] == null)
+                return RedirectToAction("DangNhap");
+
+            return View();
+        }
+        public ActionResult TimKiem(string keyword)
+        {
+            var kq = data.SACHes.Where(s => s.TenSach.Contains(keyword)).ToList();
+            ViewBag.TuKhoa = keyword;
+            return View("KetQuaTimKiem", kq);
+        }
+
         public ActionResult ChuDePartial()
         {
             var chudeList = data.CHUDEs.ToList();
@@ -63,8 +74,22 @@ namespace SachOnline.Controllers
 
         public ActionResult SachTheoChuDe(int id)
         {
+            // Lấy sách đúng chủ đề
             var sachList = data.SACHes.Where(s => s.ChuDeID == id).ToList();
-            return View(sachList); // Trả về View SachTheoChuDe.cshtml
+
+            // Nếu ít hơn 4 thì bổ sung thêm sách khác để đủ 4 cuốn
+            if (sachList.Count < 4)
+            {
+                var soCanThem = 4 - sachList.Count;
+                var sachBoSung = data.SACHes
+                                    .Where(s => s.ChuDeID != id) // sách khác chủ đề
+                                    .Take(soCanThem)
+                                    .ToList();
+
+                sachList.AddRange(sachBoSung);
+            }
+
+            return View(sachList);
         }
 
         public ActionResult SachTheoNhaXuatBan(int id)
@@ -79,11 +104,9 @@ namespace SachOnline.Controllers
             return View();
         }
 
-
         public ActionResult BookDetail(int id)
         {
             var sach = data.SACHes.FirstOrDefault(s => s.SachID == id);
-
             if (sach == null)
             {
                 return HttpNotFound();
@@ -94,11 +117,7 @@ namespace SachOnline.Controllers
 
         public ActionResult AddToCart(int id)
         {
-            List<int> cart = Session["Cart"] as List<int>;
-            if (cart == null)
-            {
-                cart = new List<int>();
-            }
+            List<int> cart = Session["Cart"] as List<int> ?? new List<int>();
             cart.Add(id);
             Session["Cart"] = cart;
             TempData["SuccessMessage"] = "Đã thêm sản phẩm vào giỏ hàng thành công!";
@@ -142,7 +161,6 @@ namespace SachOnline.Controllers
                 ViewBag.ThongBao = "Email này đã được sử dụng";
             else
             {
-                // Gán giá trị
                 kh.TenKhachHang = sTenKhachHang;
                 kh.TenDN = sTenDN;
                 kh.MatKhau = sMatkhau;
@@ -165,6 +183,12 @@ namespace SachOnline.Controllers
         {
             return View();
         }
+        public ActionResult DangXuat()
+        {
+            Session["TaiKhoan"] = null;
+            Session["TaiKhoanAdmin"] = null;
+            return RedirectToAction("Index");
+        }
 
         [HttpPost]
         public ActionResult DangNhap(FormCollection collection)
@@ -178,18 +202,21 @@ namespace SachOnline.Controllers
                 ViewData["Err2"] = "Vui lòng nhập mật khẩu";
             else
             {
-                KHACHHANG kh = data.KHACHHANGs
-                    .FirstOrDefault(n => n.TenDN == sTenDN && n.MatKhau == sMatkhau);
+                var admin = data.ADMINs.FirstOrDefault(a => a.Username == sTenDN && a.Password == sMatkhau);
+                if (admin != null)
+                {
+                    Session["TaiKhoanAdmin"] = admin;
+                    return RedirectToAction("IndexAdmin");
+                }
+
+                KHACHHANG kh = data.KHACHHANGs.FirstOrDefault(n => n.TenDN == sTenDN && n.MatKhau == sMatkhau);
                 if (kh != null)
                 {
-                    ViewBag.ThongBao = "Đăng nhập thành công vào hệ thống";
                     Session["TaiKhoan"] = kh;
-                    return RedirectToAction("Index", "SachOnline");
+                    return RedirectToAction("Index");
                 }
-                else
-                {
-                    ViewBag.ThongBao = "Tên đăng nhập hoặc mật khẩu không hợp lệ";
-                }
+
+                ViewBag.ThongBao = "Tên đăng nhập hoặc mật khẩu không hợp lệ";
             }
 
             return View();

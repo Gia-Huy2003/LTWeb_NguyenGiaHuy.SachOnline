@@ -1,3 +1,4 @@
+D:\LTWeb\NguyenGiaHuy.SachOnline\NguyenGiaHuy.SachOnline\obj\Debug\NguyenGiaHuy.SachOnline.csproj.AssemblyReference.cache
 D:\LTWeb\NguyenGiaHuy.SachOnline\NguyenGiaHuy.SachOnline\obj\Debug\NguyenGiaHuy.SachOnline.csproj.CoreCompileInputs.cache
 D:\LTWeb\NguyenGiaHuy.SachOnline\NguyenGiaHuy.SachOnline\bin\NguyenGiaHuy.SachOnline.dll.config
 D:\LTWeb\NguyenGiaHuy.SachOnline\NguyenGiaHuy.SachOnline\bin\NguyenGiaHuy.SachOnline.dll
@@ -80,4 +81,3 @@ D:\LTWeb\NguyenGiaHuy.SachOnline\NguyenGiaHuy.SachOnline\bin\Microsoft.CodeDom.P
 D:\LTWeb\NguyenGiaHuy.SachOnline\NguyenGiaHuy.SachOnline\obj\Debug\NguyenGiaHuy.SachOnline.csproj.CopyComplete
 D:\LTWeb\NguyenGiaHuy.SachOnline\NguyenGiaHuy.SachOnline\obj\Debug\NguyenGiaHuy.SachOnline.dll
 D:\LTWeb\NguyenGiaHuy.SachOnline\NguyenGiaHuy.SachOnline\obj\Debug\NguyenGiaHuy.SachOnline.pdb
-D:\LTWeb\NguyenGiaHuy.SachOnline\NguyenGiaHuy.SachOnline\obj\Debug\NguyenGiaHuy.SachOnline.csproj.AssemblyReference.cache

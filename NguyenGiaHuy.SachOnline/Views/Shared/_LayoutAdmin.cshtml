@@ -1,0 +1,73 @@
+﻿@using NguyenGiaHuy.SachOnline.Models
+@{
+    var admin = Session["TaiKhoanAdmin"] as ADMIN;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Admin Layout</title>
+    <style>
+        .nav {
+            background: black;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-left,
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+            .nav-left a,
+            .nav-right a {
+                color: white;
+                margin-right: 20px;
+                text-decoration: none;
+            }
+
+                .nav-left a:hover,
+                .nav-right a:hover {
+                    text-decoration: underline;
+                }
+
+        .admin-greeting {
+            color: #00ffcc;
+            margin-right: 20px;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <div class="nav-left">
+            <b style="color:white; margin-right:20px">SachOnlineAdmin</b>
+            <a href="/Admin/Home/Index">QUẢN LÝ SÁCH</a>
+            <a href="#">QUẢN LÝ CHỦ ĐỀ</a>
+            <a href="#">QUẢN LÝ NHÀ XUẤT BẢN</a>
+            <a href="#">QUẢN LÝ KHÁCH HÀNG</a>
+            <a href="#">QUẢN LÝ ĐƠN HÀNG</a>
+        </div>
+        <div class="nav-right">
+            @if (admin != null)
+            {
+                <span class="admin-greeting">🛡️ Xin chào, @admin.Username</span>
+            }
+            <a href="/Admin/Home/Logout">Đăng xuất</a>
+        </div>
+    </div>
+
+    <div class="content">
+        @RenderBody()
+    </div>
+</body>
+</html>

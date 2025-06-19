@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Admin Layout</title>
+    <style>
+        .nav {
+            background: black;
+            padding: 10px;
+        }
+
+            .nav a {
+                color: white;
+                margin-right: 20px;
+                text-decoration: none;
+            }
+
+                .nav a:hover {
+                    text-decoration: underline;
+                }
+
+        .content {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <b style="color:white; margin-right:20px">SachOnlineAdmin</b>
+        <a href="/Admin/Home/Index">QUẢN LÝ SÁCH</a>
+        <a href="#">QUẢN LÝ CHỦ ĐỀ</a>
+        <a href="#">QUẢN LÝ NHÀ XUẤT BẢN</a>
+        <a href="#">QUẢN LÝ KHÁCH HÀNG</a>
+        <a href="#">QUẢN LÝ ĐƠN HÀNG</a>
+        <a href="/Admin/Home/Logout" style="float:right">Đăng xuất</a>
+    </div>
+
+    <div class="content">
+        @RenderBody()
+    </div>
+</body>
+</html>
