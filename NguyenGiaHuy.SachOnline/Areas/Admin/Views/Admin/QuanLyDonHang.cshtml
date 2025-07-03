@@ -1,0 +1,48 @@
+﻿@model List<NguyenGiaHuy.SachOnline.Models.DONDATHANG>
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Quản lý đơn hàng";
+}
+
+<h2>Quản lý đơn hàng</h2>
+    <form method="get" class="form-inline mb-3">
+    <label for="filter" class="mr-2">Lọc theo:</label>
+    <select id="filter" name="filter" class="form-control mr-2" onchange="this.form.submit()">
+        <option value="">-- Tất cả --</option>
+        <option value="week" @(Request["filter"] == "week" ? "selected" : "")>Tuần này</option>
+        <option value="month" @(Request["filter"] == "month" ? "selected" : "")>Tháng này</option>
+    </select>
+</form>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Mã đơn</th>
+            <th>Khách hàng</th>
+            <th>Ngày đặt</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var dh in Model) {
+        <tr>
+            <td>@dh.MaDonHang</td>
+            <td>@dh.KHACHHANG.TenKhachHang</td>
+            <td>@(dh.NgayDat?.ToString("dd/MM/yyyy HH:mm"))</td>
+            <td>@dh.TrangThaiDonHang</td>
+            <td>
+                @if(dh.TrangThaiDonHang == "Đang xử lý") {
+                    <a href="@Url.Action("DuyetDonHang", "Admin", new { area = "Admin", id = dh.DonDatHangID })"
+                       class="btn btn-success btn-sm">
+                       Duyệt
+                    </a>
+                } else {
+                    <span class="text-muted">Đã duyệt</span>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

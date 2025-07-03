@@ -1,0 +1,29 @@
+﻿@model NguyenGiaHuy.SachOnline.Models.DONDATHANG
+
+@{
+    ViewBag.Title = "Thanh toán chuyển khoản";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+
+    string bankId = "BIDV"; // Ví dụ: Vietcombank
+    string soTaiKhoan = "6504430333";
+    string tenNguoiNhan = "NGUYEN GIA HUY";
+    int soTien = (int)ViewBag.TongTien;
+    string noiDung = Model.MaDonHang;
+    string qrUrl = $"https://img.vietqr.io/image/{bankId}-{soTaiKhoan}-compact2.png?amount={soTien}&addInfo={noiDung}&accountName={tenNguoiNhan.Replace(" ", "%20")}";
+}
+
+<h2>THANH TOÁN CHUYỂN KHOẢN</h2>
+
+<p><strong>Mã đơn hàng:</strong> @Model.MaDonHang</p>
+<p><strong>Ngày đặt:</strong> @(((DateTime)Model.NgayDat).ToString("dd/MM/yyyy HH:mm"))</p>
+<p><strong>Số tiền cần chuyển:</strong> @string.Format("{0:#,##0,0}", soTien) VNĐ</p>
+<p><strong>Nội dung chuyển khoản:</strong> <span style="color:red; font-weight:bold">@Model.MaDonHang</span></p>
+
+<p><strong>Quét mã QR dưới đây bằng ứng dụng ngân hàng:</strong></p>
+<img src="@qrUrl" alt="QR Code chuyển khoản" style="width:300px; border:2px solid #ccc; padding:10px;" />
+
+<p>
+    <em>Ghi chú: Nội dung chuyển khoản phải đúng <strong>@Model.MaDonHang</strong> để hệ thống ghi nhận thanh toán.</em>
+</p>
+
+<p>@Html.ActionLink("Về trang chủ", "Index", "SachOnline")</p>

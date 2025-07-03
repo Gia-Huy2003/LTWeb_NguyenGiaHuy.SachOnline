@@ -1,0 +1,24 @@
+﻿@model NguyenGiaHuy.SachOnline.Models.CHUDE
+@{
+    ViewBag.Title = "Thêm chủ đề";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<h2>➕ Thêm chủ đề</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        @Html.LabelFor(m => m.Tên Chủ Đề)
+        @Html.TextBoxFor(m => m.TenChuDe, new { @class = "form-control", id = "TenChuDe" })
+    </div>
+    <button type="submit" class="btn btn-success">💾 Lưu</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">🔙 Quay lại</a>
+}
+
+@section Scripts {
+    <script src="https://cdn.ckeditor.com/4.22.1/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('TenChuDe');
+    </script>
+}

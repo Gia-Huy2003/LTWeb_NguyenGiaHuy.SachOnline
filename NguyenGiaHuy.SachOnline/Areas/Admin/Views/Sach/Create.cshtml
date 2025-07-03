@@ -1,0 +1,97 @@
+﻿@model NguyenGiaHuy.SachOnline.Models.SACH
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Thêm sách mới";
+}
+
+<h2 class="text-primary mb-4">📘 Thêm sách mới</h2>
+
+@using (Html.BeginForm("Create", "Sach", FormMethod.Post, new { area = "Admin", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <!-- Cột 1 -->
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(m => m.TenSach, "Tên sách")
+                @Html.TextBoxFor(m => m.TenSach, new { @class = "form-control", required = "required" })
+            </div>
+
+            <!-- Chủ đề -->
+            <div class="form-group">
+                @Html.LabelFor(m => m.ChuDeID, "Chủ đề")
+                @Html.DropDownListFor(m => m.ChuDeID, ViewBag.ChuDeID as SelectList, "-- Chọn chủ đề --", new { @class = "form-control", required = "required" })
+            </div>
+
+            <!-- Nhà xuất bản -->
+            <div class="form-group">
+                @Html.LabelFor(m => m.NhaXuatBanID, "Nhà xuất bản")
+                @Html.DropDownListFor(m => m.NhaXuatBanID, ViewBag.NhaXuatBanID as SelectList, "-- Chọn NXB --", new { @class = "form-control", required = "required" })
+            </div>
+
+            <!-- Tác giả -->
+            <div class="form-group">
+                @Html.LabelFor(m => m.TacGiaID, "Tác giả")
+                @Html.DropDownListFor(m => m.TacGiaID, ViewBag.TacGiaID as SelectList, "-- Chọn tác giả --", new { @class = "form-control", required = "required" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.GiaBan, "Giá bán")
+                @Html.TextBoxFor(m => m.GiaBan, new { @class = "form-control", required = "required", type = "number", step = "0.01" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.SoLuong, "Số lượng")
+                @Html.TextBoxFor(m => m.SoLuong, new { @class = "form-control", required = "required", type = "number" })
+            </div>
+        </div>
+
+        <!-- Cột 2 -->
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(m => m.NgayCapNhat, "Ngày cập nhật")
+                @Html.TextBoxFor(m => m.NgayCapNhat, "{0:yyyy-MM-dd}", new { @class = "form-control", required = "required", type = "date" })
+            </div>
+
+            <div class="form-group">
+                <label>Ảnh bìa (Upload ảnh)</label>
+                <input type="file" name="uploadFile" accept="image/*" class="form-control-file" required />
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Mota, "Mô tả chi tiết")
+                @Html.TextAreaFor(m => m.Mota, new { @class = "form-control", rows = 4, id = "Mota" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.MoTaNgan, "Mô tả ngắn")
+                @Html.TextAreaFor(m => m.MoTaNgan, new { @class = "form-control", rows = 2, id = "MoTaNgan" })
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group mt-3">
+        <button type="submit" class="btn btn-success">💾 Lưu sách</button>
+        <a href="@Url.Action("Index")" class="btn btn-secondary ml-2">🔙 Quay lại</a>
+    </div>
+}
+
+@section Scripts {
+    <!-- CKEditor CDN -->
+    <script src="https://cdn.ckeditor.com/4.22.1/ckeditor.js"></script>
+    <script>
+        // ✅ Áp CKEditor cho TẤT CẢ Textarea trong form
+        document.querySelectorAll('textarea').forEach(function (textarea) {
+            CKEDITOR.replace(textarea.id);
+        });
+
+        // ✅ Xác nhận khi nhấn nút "Lưu sách"
+        const saveButton = document.querySelector('button[type="submit"]');
+        saveButton.addEventListener('click', function (e) {
+            if (!confirm("Bạn có chắc chắn muốn lưu sách?")) {
+                e.preventDefault();
+            }
+        });
+    </script>
+}

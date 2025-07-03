@@ -1,81 +1,126 @@
-﻿@{ ViewBag.Title = "DangNhap";
-                Layout = "~/Views/Shared/_LayoutUser.cshtml"; }
+﻿@{
+    ViewBag.Title = "Đăng nhập";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
 
-<style type="text/css">
-    h4 {
-        color: red;
-        text-align: center;
+<style>
+    body {
+        background-color: #f0f2f5;
+    }
+
+    .login-container {
+        max-width: 420px;
+        margin: 80px auto;
+        background: #fff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     }
 
     h2 {
         text-align: center;
+        margin-bottom: 30px;
+        color: #333;
     }
 
-    table {
-        margin: 0 auto;
-        border-collapse: collapse;
-        width: 50%;
+    .form-group {
+        margin-bottom: 20px;
     }
 
-    td {
-        padding: 10px;
-        text-align: right;
-        height: 40px;
+    .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
     }
 
-    input[type="text"],
-    input[type="password"] {
+    .form-group input {
         width: 100%;
-        padding: 8px;
+        padding: 10px;
         border: 1px solid #ccc;
-        border-radius: 4px;
+        border-radius: 6px;
+        background-color: #f8f9fa;
     }
 
-    input[type="submit"],
-    input[type="reset"] {
-        padding: 8px 16px;
-        background-color: #007BFF;
-        color: #fff;
+    .btn-block {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        font-weight: bold;
         border: none;
-        border-radius: 4px;
+        border-radius: 6px;
         cursor: pointer;
-        width: 160px;
+        font-size: 16px;
     }
 
-        input[type="submit"]:hover,
-        input[type="reset"]:hover {
-            background-color: #0056b3;
-        }
+    .btn-login {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-login:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-reset {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-reset:hover {
+        background-color: #1e7e34;
+    }
+
+    .btn-change {
+        background-color: orange;
+        color: white;
+    }
+
+    .btn-change:hover {
+        background-color: darkorange;
+    }
 
     .error-message {
         color: red;
+        font-size: 14px;
+    }
+
+    h4 {
+        color: red;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .btn-group-custom {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 20px;
     }
 </style>
 
-<h4>@ViewBag.ThongBao</h4>
-<h2>ĐĂNG NHẬP</h2>
-<table align="center">
+<div class="login-container">
+    <h2>ĐĂNG NHẬP</h2>
+    <h4>@ViewBag.ThongBao</h4>
+
     @using (Html.BeginForm())
     {
-<tr>
-    <td>Tên đăng nhập: </td>
-    <td>
-        @Html.TextBox("TenDN")
-        <span class="error-message">@ViewData["Err1"]</span>
-    </td>
-</tr>
-                <tr>
-                    <td>Mật khẩu: </td>
-                    <td>
-                        @Html.Password("MatKhau")
-                        <span class="error-message">@ViewBag.Err2</span>
-                    </td>
-                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>
-                                        <input type="submit" value="Đăng nhập" /><br /><br />
-                                        <input type="reset" value="Đăng ký" />
-                                    </td>
-                                </tr>}
-</table>
+        <div class="form-group">
+            <label>Tên đăng nhập:</label>
+            @Html.TextBox("TenDN", null, new { @class = "form-control" })
+            <span class="error-message">@ViewData["Err1"]</span>
+        </div>
+
+        <div class="form-group">
+            <label>Mật khẩu:</label>
+            @Html.Password("MatKhau", new { @class = "form-control" })
+            <span class="error-message">@ViewBag.Err2</span>
+        </div>
+
+        <input type="submit" value="Đăng nhập" class="btn-block btn-login" />
+    }
+
+    <div class="btn-group-custom">
+        <a href="@Url.Action("DoiMatKhau", "Home")" class="btn-block btn-change" style="text-align: center; text-decoration: none;">Đổi mật khẩu</a>
+        <input type="reset" value="Đăng ký" class="btn-block btn-reset" />
+    </div>
+</div>

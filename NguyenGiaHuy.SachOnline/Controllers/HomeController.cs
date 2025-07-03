@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
-using NguyenGiaHuy.SachOnline.Models; // ✅ DÒNG NÀY CẦN THÊM
+using NguyenGiaHuy.SachOnline.Models;
 
 namespace NguyenGiaHuy.SachOnline.Controllers
 {
@@ -37,7 +34,6 @@ namespace NguyenGiaHuy.SachOnline.Controllers
         [HttpPost]
         public ActionResult Login(string Username, string Password)
         {
-            // Kiểm tra tài khoản Admin
             var admin = db.ADMINs.SingleOrDefault(a => a.Username == Username && a.Password == Password);
             if (admin != null)
             {
@@ -45,18 +41,8 @@ namespace NguyenGiaHuy.SachOnline.Controllers
                 return RedirectToAction("Index", "Home", new { area = "Admin" });
             }
 
-            // Kiểm tra tài khoản Khách hàng
-            var user = db.KHACHHANGs.SingleOrDefault(u => u.TenDN == Username && u.MatKhau == Password);
-            if (user != null)
-            {
-                Session["User"] = user;
-                Session["UserName"] = user.TenKhachHang;
-                return RedirectToAction("Index", "SachOnline");
-            }
-
-            // Sai thông tin
             ViewBag.Error = "Sai tài khoản hoặc mật khẩu!";
-            return View();
+            return View("~/Areas/Admin/Views/Home/Login.cshtml");
         }
 
         public ActionResult Logout()
@@ -65,6 +51,47 @@ namespace NguyenGiaHuy.SachOnline.Controllers
             Session["User"] = null;
             Session["UserName"] = null;
             return RedirectToAction("Login");
+        }
+
+        public ActionResult DoiMatKhau()
+        {
+            return View("~/Views/SachOnline/DoiMatKhau.cshtml");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DoiMatKhau(DoiMatKhauViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.ThongBao = "Vui lòng nhập đầy đủ thông tin hợp lệ.";
+                return View("~/Views/SachOnline/DoiMatKhau.cshtml", model);
+            }
+
+            var kh = db.KHACHHANGs.SingleOrDefault(k => k.TenDN == model.TenDN && k.MatKhau == model.MatKhauCu);
+            if (kh == null)
+            {
+                ModelState.AddModelError("", "Tên đăng nhập hoặc mật khẩu cũ không đúng.");
+                return View("~/Views/SachOnline/DoiMatKhau.cshtml", model);
+            }
+
+            if (model.MatKhauMoi != model.XacNhanMatKhauMoi)
+            {
+                ModelState.AddModelError("", "Mật khẩu mới và xác nhận không khớp.");
+                return View("~/Views/SachOnline/DoiMatKhau.cshtml", model);
+            }
+
+            // ✅ Cập nhật mật khẩu
+            kh.MatKhau = model.MatKhauMoi;
+            db.Entry(kh).State = System.Data.Entity.EntityState.Modified;
+            db.SaveChanges();
+
+            // ✅ Thoát session và hiển thị thông báo
+            Session["User"] = null;
+            Session["UserName"] = null;
+            TempData["ThongBao"] = "Đổi mật khẩu thành công. Vui lòng đăng nhập lại.";
+
+            return RedirectToAction("DangNhap", "SachOnline");
         }
     }
 }

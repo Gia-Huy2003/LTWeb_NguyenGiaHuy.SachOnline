@@ -1,0 +1,43 @@
+﻿@model NguyenGiaHuy.SachOnline.Models.SACH
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Xóa sách";
+}
+
+<h2 class="text-danger mb-4">Xác nhận xóa sách</h2>
+
+<div class="alert alert-warning">
+    <strong>Bạn có chắc muốn xóa sách này?</strong>
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Tên sách:</dt>
+    <dd class="col-sm-9">@Model.TenSach</dd>
+
+    <dt class="col-sm-3">Giá bán:</dt>
+    <dd class="col-sm-9">@(((float)Model.GiaBan).ToString("N0"))</dd>
+
+    <dt class="col-sm-3">Ngày cập nhật:</dt>
+    <dd class="col-sm-9">@Model.NgayCapNhat?.ToString("dd-MM-yyyy")</dd>
+</dl>
+
+@using (Html.BeginForm("Delete", "Sach", FormMethod.Post, new { area = "Admin" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.SachID)
+
+    <button type="submit" class="btn btn-danger" id="deleteBtn">Xác nhận xóa</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Hủy</a>
+}
+
+@section Scripts {
+    <script>
+        // Khi nhấn nút Xác nhận xóa
+        document.getElementById("deleteBtn").addEventListener("click", function (e) {
+            var confirmed = confirm("Bạn có chắc chắn muốn xóa sách này?");
+            if (!confirmed) {
+                e.preventDefault();
+            }
+        });
+    </script>
+}

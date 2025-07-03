@@ -1,0 +1,77 @@
+﻿@model NguyenGiaHuy.SachOnline.Models.ViewModels.SachDetailsViewModel
+
+@{
+    ViewBag.Title = "Chi tiết sách";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2 class="text-primary mb-4">Chi tiết sách</h2>
+
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>Tên sách:</th>
+        <td>@Model.Sach.TenSach</td>
+    </tr>
+
+    <tr>
+    <th>Mô tả chi tiết:</th>
+    <td>
+        <textarea id="Mota" readonly style="width:100%;resize:none;" 
+                  oninput="autoResize(this)">@Model.Sach.Mota</textarea>
+    </td>
+    </tr>
+
+    <tr>
+    <th>Mô tả ngắn:</th>
+    <td>
+        <textarea id="MoTaNgan" readonly style="width:100%;resize:none;" 
+                  oninput="autoResize(this)">@Model.Sach.MoTaNgan</textarea>
+    </td>
+    </tr>
+
+        <th>Số lượng:</th>
+        <td>@Model.Sach.SoLuong</td>
+    </tr>
+    <tr>
+        <th>Giá bán:</th>
+        <td>@(Model.Sach.GiaBan.HasValue ? Model.Sach.GiaBan.Value.ToString("N0") + " VNĐ" : "N/A")</td>
+    </tr>
+    <tr>
+        <th>Ngày cập nhật:</th>
+        <td>@(Model.Sach.NgayCapNhat.HasValue ? Model.Sach.NgayCapNhat.Value.ToString("dd-MM-yyyy") : "N/A")</td>
+    </tr>
+    <tr>
+        <th>Chủ đề:</th>
+        <td>@Model.TenChuDe</td>
+    </tr>
+    <tr>
+        <th>Nhà xuất bản:</th>
+        <td>@Model.TenNXB</td>
+    </tr>
+    <tr>
+        <th>Ảnh bìa:</th>
+        <td>
+            <img src="@Url.Content("~/Images/" + Model.Sach.anhSP)" width="150" class="img-thumbnail" />
+        </td>
+    </tr>
+</table>
+
+<a href="@Url.Action("Index", "Sach")" class="btn btn-secondary">⬅ Quay lại</a>
+
+@section Scripts {
+    <script>
+        function autoResize(textarea) {
+            // Reset lại height để đo đúng scrollHeight
+            textarea.style.height = "auto"; 
+            // Set lại height bằng scrollHeight
+            textarea.style.height = textarea.scrollHeight + "px"; 
+        }
+
+        window.onload = function() {
+            // Khi load trang, tự động chỉnh độ cao cho tất cả các textareas readonly
+            document.querySelectorAll('textarea[readonly]').forEach(function(txt) {
+                autoResize(txt);
+            });
+        };
+    </script>
+}

@@ -34,13 +34,17 @@
     </Key>
     <Property Name="DonDatHangID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="KhachHangID" Type="Int32" />
-    <Property Name="NgayDat" Type="DateTime" Precision="0" />
+    <Property Name="NgayDat" Type="DateTime" Precision="3" />
     <Property Name="TongTien" Type="Double" />
     <NavigationProperty Name="CHITIETDATHANGs" Relationship="Self.FK__CHITIETDA__DonDa__46E78A0C" FromRole="DONDATHANG" ToRole="CHITIETDATHANG" />
     <NavigationProperty Name="KHACHHANG" Relationship="Self.FK__DONDATHAN__Khach__48CFD27E" FromRole="DONDATHANG" ToRole="KHACHHANG" />
     <Property Name="NgayGiao" Type="DateTime" Precision="3" />
     <Property Name="TinhTrangDonHang" Type="Boolean" />
     <Property Name="DaThanhToan" Type="Boolean" />
+    <Property Name="DiaChiGiao" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="PhuongThucThanhToan" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="MaDonHang" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="TrangThaiDonHang" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
   </EntityType>
   <EntityType Name="KHACHHANG">
     <Key>
@@ -48,7 +52,7 @@
     </Key>
     <Property Name="KhachHangID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="TenKhachHang" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-    <Property Name="DiaChi" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="DiaChi" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
     <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
     <Property Name="SoDienThoai" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
     <NavigationProperty Name="DONDATHANGs" Relationship="Self.FK__DONDATHAN__Khach__48CFD27E" FromRole="KHACHHANG" ToRole="DONDATHANG" />
@@ -61,7 +65,7 @@
     </Key>
     <Property Name="NhaXuatBanID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="TenNhaXuatBan" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-    <Property Name="DiaChi" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="DiaChi" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
     <NavigationProperty Name="SACHes" Relationship="Self.FK__SACH__NhaXuatBan__4AB81AF0" FromRole="NHAXUATBAN" ToRole="SACH" />
   </EntityType>
   <EntityType Name="SACH">
@@ -83,6 +87,7 @@
     <NavigationProperty Name="TACGIA" Relationship="Self.FK__SACH__TacGiaID__4BAC3F29" FromRole="SACH" ToRole="TACGIA" />
     <NavigationProperty Name="VIETSACHes" Relationship="Self.FK__VIETSACH__SachID__4CA06362" FromRole="SACH" ToRole="VIETSACH" />
     <Property Name="Mota" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="MoTaNgan" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
   </EntityType>
   <EntityType Name="TACGIA">
     <Key>

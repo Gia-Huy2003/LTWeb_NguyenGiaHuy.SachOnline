@@ -1,0 +1,81 @@
+﻿@model List<NguyenGiaHuy.SachOnline.Models.ViewModels.ThongKeDoanhThuViewModel>
+@using Newtonsoft.Json
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Thống kê doanh thu";
+}
+
+<h2 class="mb-4">Thống kê doanh thu</h2>
+
+<form method="get" class="form-inline mb-3">
+    <label class="mr-2">Từ ngày:</label>
+    <input type="date" name="tuNgay" value="@ViewBag.TuNgay" class="form-control mr-3" />
+
+    <label class="mr-2">Đến ngày:</label>
+    <input type="date" name="denNgay" value="@ViewBag.DenNgay" class="form-control mr-3" />
+
+    <button type="submit" class="btn btn-primary">Lọc</button>
+</form>
+
+<table class="table table-bordered">
+    <thead style="background-color: #f2f2f2;">
+        <tr>
+            <th>Mã đơn</th>
+            <th>Ngày đặt</th>
+            <th>Tổng tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.DonDatHangID</td>
+                <td>@(item.NgayDat.HasValue ? item.NgayDat.Value.ToString("dd/MM/yyyy HH:mm") : "")</td>
+                <td>@item.TongTien.ToString("N0") VNĐ</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h4 class="text-right text-danger">Tổng doanh thu:
+    <strong>@String.Format("{0:N0} đ", ViewBag.TongDoanhThu)</strong>
+</h4>
+
+<hr />
+
+<h3 class="mt-5">Biểu đồ doanh thu</h3>
+<canvas id="doanhThuChart" width="1000" height="400"></canvas>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('doanhThuChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(JsonConvert.SerializeObject(ViewBag.Labels)),
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    data: @Html.Raw(JsonConvert.SerializeObject(ViewBag.Values))
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString("vi-VN") + ' đ';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

@@ -31,11 +31,15 @@
     </Key>
     <Property Name="DonDatHangID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="KhachHangID" Type="int" />
-    <Property Name="NgayDat" Type="date" />
+    <Property Name="NgayDat" Type="datetime" />
     <Property Name="TongTien" Type="float" />
-    <Property Name="NgayGiao" Type="datetime" />
     <Property Name="TinhTrangDonHang" Type="bit" />
     <Property Name="DaThanhToan" Type="bit" />
+    <Property Name="NgayGiao" Type="datetime" />
+    <Property Name="DiaChiGiao" Type="nvarchar" MaxLength="200" />
+    <Property Name="PhuongThucThanhToan" Type="nvarchar" MaxLength="100" />
+    <Property Name="MaDonHang" Type="nvarchar" MaxLength="10" />
+    <Property Name="TrangThaiDonHang" Type="nvarchar" MaxLength="50" Nullable="false" />
   </EntityType>
   <EntityType Name="KHACHHANG">
     <Key>
@@ -43,7 +47,7 @@
     </Key>
     <Property Name="KhachHangID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="TenKhachHang" Type="nvarchar" MaxLength="100" />
-    <Property Name="DiaChi" Type="varchar" MaxLength="200" />
+    <Property Name="DiaChi" Type="nvarchar" MaxLength="255" />
     <Property Name="Email" Type="varchar" MaxLength="100" />
     <Property Name="SoDienThoai" Type="varchar" MaxLength="20" />
     <Property Name="TenDN" Type="nvarchar" MaxLength="50" />
@@ -55,7 +59,7 @@
     </Key>
     <Property Name="NhaXuatBanID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="TenNhaXuatBan" Type="nvarchar" MaxLength="100" />
-    <Property Name="DiaChi" Type="varchar" MaxLength="200" />
+    <Property Name="DiaChi" Type="nvarchar" MaxLength="255" />
   </EntityType>
   <EntityType Name="SACH">
     <Key>
@@ -71,6 +75,7 @@
     <Property Name="NgayCapNhat" Type="date" />
     <Property Name="anhSP" Type="nchar" MaxLength="10" />
     <Property Name="Mota" Type="nvarchar(max)" />
+    <Property Name="MoTaNgan" Type="nvarchar" MaxLength="255" />
   </EntityType>
   <EntityType Name="sysdiagrams">
     <Key>

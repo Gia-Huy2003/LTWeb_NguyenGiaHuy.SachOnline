@@ -1,5 +1,5 @@
 ﻿
-@{ ViewBag.Title = "SachTheoNhaXuatBan";
+@{ ViewBag.Title = "Sách theo nhà xuất bản";
                 Layout = "~/Views/Shared/_LayoutUser.cshtml"; }
 
 <h2 class="text-center">Sách theo nhà xuất bản</h2>
@@ -15,9 +15,9 @@
                 <a href="@Url.Action("BookDetail","SachOnline", new { id =SACH.SachID})">@SACH.TenSach</a>
             </h6>
             <p>
-                <a href="@Url.Action("AddToCart", "SachOnline", new { id = SACH.SachID })" class="btn btn-primary" role="button">
-                    <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Add to Cart
-                </a>
+                <a href="@Url.Action("ThemGioHang", "GioHang", new { ms = SACH.SachID, url = Request.Url.ToString() })" class="btn btn-primary" role="button">
+                    <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Thêm vào giỏ hàng
+            </a>
 
             </p>
         </div>

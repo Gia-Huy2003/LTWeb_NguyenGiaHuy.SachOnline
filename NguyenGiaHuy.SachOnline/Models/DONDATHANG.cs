@@ -27,6 +27,10 @@ namespace NguyenGiaHuy.SachOnline.Models
         public Nullable<System.DateTime> NgayGiao { get; set; }
         public Nullable<bool> TinhTrangDonHang { get; set; }
         public Nullable<bool> DaThanhToan { get; set; }
+        public string DiaChiGiao { get; set; }
+        public string PhuongThucThanhToan { get; set; }
+        public string MaDonHang { get; set; }
+        public string TrangThaiDonHang { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CHITIETDATHANG> CHITIETDATHANGs { get; set; }
