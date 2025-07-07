@@ -18,16 +18,19 @@ namespace NguyenGiaHuy.SachOnline.Models
             get { return iSoLuong * dGiaTien; }
         }
 
-        public GioHang(int ms)
+        public GioHang(int maSach)
         {
-            iSachID = ms;
-
-            SACH s = db.SACHes.Single(n => n.SachID == iSachID);
-
+            SACH s = db.SACHes.Single(n => n.SachID == maSach);
+            iSachID = maSach;
             sTenSach = s.TenSach;
             sAnhSP = s.anhSP;
-            dGiaTien = s.GiaBan ?? 0;  // Dùng null-coalescing operator vì GiaBan là nullable
             iSoLuong = 1;
+
+            // ✅ Ưu tiên giá khuyến mãi nếu có
+            if (s.GiaKhuyenMai.HasValue && s.GiaKhuyenMai < s.GiaBan)
+                dGiaTien = s.GiaKhuyenMai.Value;
+            else
+                dGiaTien = s.GiaBan ?? 0;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿@model NguyenGiaHuy.SachOnline.Models.SACH
 
 @{
-    ViewBag.Title = "BookDetail";
+    ViewBag.Title = "Thông tin chi tiết";
     Layout = "~/Views/Shared/_LayoutUser.cshtml";
 }
 
@@ -20,68 +20,136 @@ else
         </div>
     }
 
-    <style type="text/css">
-        .img {
+    <style>
+        .book-detail {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            margin-top: 30px;
+        }
+
+        .book-image {
             width: 300px;
-            height: 450px;
-            display: block;
-            margin: 0 auto;
+            height: auto;
+            flex-shrink: 0;
         }
 
-        .tensach {
-            text-align: center;
-            font-size: 24px;
+        .book-info {
+            flex-grow: 1;
+        }
+
+        .book-info h3 {
             font-weight: bold;
-            margin-top: 20px;
         }
 
-        .motasach {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f5f5f5;
-            border-radius: 5px;
+        .book-info p {
             font-size: 16px;
         }
 
-        .giaban, .ngaycapnhat, .addtocard {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 18px;
+        .price-sale {
+            color: red;
+            font-size: 22px;
+            font-weight: bold;
         }
 
-            .addtocard a {
-                font-size: 16px;
-            }
+        .price-old {
+            text-decoration: line-through;
+            color: gray;
+            font-size: 16px;
+            margin-left: 8px;
+        }
+
+        .discount-percent {
+            color: red;
+            font-weight: bold;
+            font-size: 14px;
+            margin-left: 8px;
+        }
+
+        .book-actions {
+            margin-top: 20px;
+        }
+
+        .mota-chi-tiet {
+            margin-top: 30px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 6px;
+        }
+
+        .related-books {
+            margin-top: 40px;
+        }
+
+        .related-books h4 {
+            margin-bottom: 15px;
+        }
+
+        .related-books .card {
+            margin-right: 15px;
+        }
     </style>
 
     <h2 class="text-center">Chi tiết sản phẩm</h2>
 
-    <div class="thumbnail">
-        <h4 class="tensach">
-            @Model.TenSach
-        </h4>
+    <div class="book-detail">
+        <img src="~/Images/@Model.anhSP" alt="@Model.TenSach" class="book-image" />
 
-        <img src="~/Images/@Model.anhSP" alt="@Model.TenSach" class="img" />
+        <div class="book-info">
+            <h3>@Model.TenSach</h3>
 
-        <div class="motasach">
-            <strong>Mô tả:</strong>
-            <p>
-                @Html.Raw((Model.Mota ?? "Chưa có mô tả.").Replace("\n", "</p><p>&nbsp;&nbsp;&nbsp;&nbsp;"))
+            <p><strong>Giá bán:</strong>
+                @if (Model.GiaKhuyenMai != null && Model.GiaKhuyenMai < Model.GiaBan)
+                    {
+                        var phanTram = (int)Math.Round((1 - Model.GiaKhuyenMai.Value / Model.GiaBan.Value) * 100);
+                        <span class="price-sale">@Model.GiaKhuyenMai.Value.ToString("N0") VNĐ</span>
+                        <span class="price-old">@Model.GiaBan.Value.ToString("N0") VNĐ</span>
+                        <span class="badge badge-danger ml-2">-@phanTram%</span>
+                    }
+                    else
+                    {
+                        <span class="price-normal">@Model.GiaBan.Value.ToString("N0") VNĐ</span>
+                    }
             </p>
+
+            <p><strong>Ngày cập nhật:</strong> @Html.FormatValue(Model.NgayCapNhat, "{0:dd/MM/yyyy}")</p>
+            <p><strong>Mô tả ngắn:</strong> @Model.MoTaNgan</p>
+
+            <div class="book-actions">
+                <a href="@Url.Action("ThemGioHang", "GioHang", new { ms = Model.SachID, url = Request.Url.ToString() })" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-shopping-cart"></span> Thêm vào giỏ hàng
+                </a>
+            </div>
         </div>
+    </div>
 
-        <p class="ngaycapnhat">
-            Ngày cập nhật: @Html.FormatValue(Model.NgayCapNhat, "{0:dd/MM/yyyy}")
+    <div class="mota-chi-tiet">
+        <h4>Mô tả chi tiết</h4>
+        <p>
+            @Html.Raw((Model.Mota ?? "Chưa có mô tả.").Replace("\n", "</p><p>&nbsp;&nbsp;&nbsp;&nbsp;"))
         </p>
+    </div>
 
-        <p class="giaban">
-            Giá bán: <span>@Html.FormatValue(Model.GiaBan, "{0:#,##0}") VNĐ</span>
-        </p>
+    <div class="related-books">
+        <h4>Sách cùng chủ đề</h4>
+        <div class="d-flex flex-row">
+            @{
+                var relatedBooks = new NguyenGiaHuy.SachOnline.Models.SachOnline1Entities1().SACHes
+                    .OrderByDescending(s => s.NgayCapNhat)
+                    .Take(3)
+                    .ToList();
 
-        <p class="addtocard">
-            <a href="@Url.Action("ThemGioHang", "GioHang", new { ms = Model.SachID, url = Request.Url.ToString() })" class="btn btn-primary">
-                <span class="glyphicon glyphicon-shopping-cart"></span> Add to Cart
-            </a>
-        </p>
+                foreach (var item in relatedBooks)
+                {
+                    <div class="card" style="width: 12rem;">
+                        <img src="~/Images/@item.anhSP" class="card-img-top" alt="@item.TenSach">
+                        <div class="card-body">
+                            <h6 class="card-title">@item.TenSach</h6>
+                            <a href="@Url.Action("BookDetail", "SachOnline", new { id = item.SachID })" class="btn btn-sm btn-outline-primary">Xem chi tiết</a>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
     </div>
 }

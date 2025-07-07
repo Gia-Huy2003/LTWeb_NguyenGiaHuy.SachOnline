@@ -4,10 +4,11 @@ using System.Linq;
 using System.Web.Mvc;
 using NguyenGiaHuy.SachOnline.Models;
 
-namespace SachOnline.Controllers
+namespace NguyenGiaHuy.SachOnline.Controllers
 {
     public class SachOnlineController : Controller
     {
+        SachOnline1Entities1 db = new SachOnline1Entities1();
         private SachOnline1Entities1 data;
 
         public SachOnlineController()
@@ -48,80 +49,66 @@ namespace SachOnline.Controllers
 
             return View();
         }
-        public ActionResult TimKiem(string keyword)
-        {
-            var kq = data.SACHes.Where(s => s.TenSach.Contains(keyword)).ToList();
-            ViewBag.TuKhoa = keyword;
-            return View("KetQuaTimKiem", kq);
-        }
 
-        public ActionResult ChuDePartial()
+        [HttpGet]
+        public ActionResult DangNhap()
         {
-            var chudeList = data.CHUDEs.ToList();
-            return PartialView(chudeList);
-        }
-
-        public ActionResult NhaXuatBanPartial()
-        {
-            var listNhaXuatBan = from cd in data.NHAXUATBANs select cd;
-            return PartialView(listNhaXuatBan);
-        }
-
-        public ActionResult SachBanNhieuPartial()
-        {
+            ViewBag.ThongBao = TempData["ThongBao"];
             return View();
         }
 
-        public ActionResult SachTheoChuDe(int id)
+        [HttpPost]
+        public ActionResult DangNhap(FormCollection collection)
         {
-            // Lấy sách đúng chủ đề
-            var sachList = data.SACHes.Where(s => s.ChuDeID == id).ToList();
+            var sTenDN = collection["TenDN"];
+            var sMatkhau = collection["Matkhau"];
 
-            // Nếu ít hơn 4 thì bổ sung thêm sách khác để đủ 4 cuốn
-            if (sachList.Count < 4)
+            if (String.IsNullOrEmpty(sTenDN))
+                ViewData["Err1"] = "Vui lòng nhập tên đăng nhập";
+            else if (String.IsNullOrEmpty(sMatkhau))
+                ViewData["Err2"] = "Vui lòng nhập mật khẩu";
+            else
             {
-                var soCanThem = 4 - sachList.Count;
-                var sachBoSung = data.SACHes
-                                    .Where(s => s.ChuDeID != id) // sách khác chủ đề
-                                    .Take(soCanThem)
-                                    .ToList();
+                var admin = data.ADMINs.FirstOrDefault(a => a.Username == sTenDN && a.Password == sMatkhau);
+                if (admin != null)
+                {
+                    Session["TaiKhoanAdmin"] = admin;
+                    return RedirectToAction("IndexAdmin");
+                }
 
-                sachList.AddRange(sachBoSung);
+                KHACHHANG kh = data.KHACHHANGs.FirstOrDefault(n => n.TenDN == sTenDN && n.MatKhau == sMatkhau);
+                if (kh != null)
+                {
+                    Session["TaiKhoan"] = kh;
+                    return RedirectToAction("Index");
+                }
+
+                ViewBag.ThongBao = "Tên đăng nhập hoặc mật khẩu không hợp lệ";
             }
 
-            return View(sachList);
-        }
-
-        public ActionResult SachTheoNhaXuatBan(int id)
-        {
-            var sach = from s in data.SACHes where s.NhaXuatBanID == id select s;
-            return View(sach);
-        }
-
-        public ActionResult About()
-        {
-            ViewBag.Message = "Giới thiệu về Bookstore";
             return View();
         }
-
-        public ActionResult BookDetail(int id)
+        public ActionResult LocSach(string loaiLoc)
         {
-            var sach = data.SACHes.FirstOrDefault(s => s.SachID == id);
-            if (sach == null)
+            var sach = db.SACHes.AsQueryable();
+
+            switch (loaiLoc)
             {
-                return HttpNotFound();
+                case "thapcao":
+                    sach = sach.OrderBy(s => s.GiaBan);
+                    break;
+                case "caothap":
+                    sach = sach.OrderByDescending(s => s.GiaBan);
+                    break;
+                case "khuyenmai":
+                    sach = sach.Where(s => s.GiaKhuyenMai != null && s.GiaKhuyenMai < s.GiaBan);
+                    break;
+                default:
+                    sach = sach.OrderByDescending(s => s.NgayCapNhat); // mặc định
+                    break;
             }
 
-            return View(sach);
-        }
-
-        public ActionResult AddToCart(int id)
-        {
-            List<int> cart = Session["Cart"] as List<int> ?? new List<int>();
-            cart.Add(id);
-            Session["Cart"] = cart;
-            TempData["SuccessMessage"] = "Đã thêm sản phẩm vào giỏ hàng thành công!";
-            return RedirectToAction("Index", "SachOnline");
+            return View("Index", sach.ToList()); // Dùng lại View Index.cshtml
         }
 
         [HttpGet]
@@ -179,10 +166,6 @@ namespace SachOnline.Controllers
         }
 
         [HttpGet]
-        public ActionResult DangNhap()
-        {
-            return View();
-        }
         public ActionResult DangXuat()
         {
             Session["TaiKhoan"] = null;
@@ -190,35 +173,91 @@ namespace SachOnline.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public ActionResult DangNhap(FormCollection collection)
+        [HttpGet]
+        public ActionResult TimKiem(string keyword, int page = 1, int pageSize = 6)
         {
-            var sTenDN = collection["TenDN"];
-            var sMatkhau = collection["Matkhau"];
+            var allResults = db.SACHes
+                .Where(s => s.TenSach.Contains(keyword))
+                .OrderByDescending(s => s.NgayCapNhat)
+                .ToList();
 
-            if (String.IsNullOrEmpty(sTenDN))
-                ViewData["Err1"] = "Vui lòng nhập tên đăng nhập";
-            else if (String.IsNullOrEmpty(sMatkhau))
-                ViewData["Err2"] = "Vui lòng nhập mật khẩu";
-            else
+            int total = allResults.Count();
+            var ketQuaPhanTrang = allResults
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.TuKhoa = keyword;
+            ViewBag.Trang = page;
+            ViewBag.TongTrang = (int)Math.Ceiling((double)total / pageSize);
+
+            return View(ketQuaPhanTrang);
+        }
+
+        public ActionResult ChuDePartial()
+        {
+            var chudeList = data.CHUDEs.ToList();
+            return PartialView(chudeList);
+        }
+
+        public ActionResult NhaXuatBanPartial()
+        {
+            var listNhaXuatBan = data.NHAXUATBANs.ToList();
+            return PartialView(listNhaXuatBan);
+        }
+
+        public ActionResult SachBanNhieuPartial()
+        {
+            return View();
+        }
+
+        public ActionResult SachTheoChuDe(int id)
+        {
+            var sachList = data.SACHes.Where(s => s.ChuDeID == id).ToList();
+
+            if (sachList.Count < 4)
             {
-                var admin = data.ADMINs.FirstOrDefault(a => a.Username == sTenDN && a.Password == sMatkhau);
-                if (admin != null)
-                {
-                    Session["TaiKhoanAdmin"] = admin;
-                    return RedirectToAction("IndexAdmin");
-                }
+                var soCanThem = 4 - sachList.Count;
+                var sachBoSung = data.SACHes
+                                    .Where(s => s.ChuDeID != id)
+                                    .Take(soCanThem)
+                                    .ToList();
 
-                KHACHHANG kh = data.KHACHHANGs.FirstOrDefault(n => n.TenDN == sTenDN && n.MatKhau == sMatkhau);
-                if (kh != null)
-                {
-                    Session["TaiKhoan"] = kh;
-                    return RedirectToAction("Index");
-                }
-
-                ViewBag.ThongBao = "Tên đăng nhập hoặc mật khẩu không hợp lệ";
+                sachList.AddRange(sachBoSung);
             }
 
+            return View(sachList);
+        }
+
+        public ActionResult SachTheoNhaXuatBan(int id)
+        {
+            var sach = data.SACHes.Where(s => s.NhaXuatBanID == id).ToList();
+            return View(sach);
+        }
+
+        public ActionResult BookDetail(int id)
+        {
+            var sach = data.SACHes.FirstOrDefault(s => s.SachID == id);
+            if (sach == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(sach);
+        }
+
+        public ActionResult AddToCart(int id)
+        {
+            List<int> cart = Session["Cart"] as List<int> ?? new List<int>();
+            cart.Add(id);
+            Session["Cart"] = cart;
+            TempData["SuccessMessage"] = "Đã thêm sản phẩm vào giỏ hàng thành công!";
+            return RedirectToAction("Index", "SachOnline");
+        }
+
+        public ActionResult About()
+        {
+            ViewBag.Message = "Giới thiệu về Bookstore";
             return View();
         }
     }

@@ -9,6 +9,8 @@ namespace NguyenGiaHuy.SachOnline.Models
     {
         public IEnumerable<SACH> Saches { get; set; }
         public PagingInfo PagingInfo { get; set; }
+        public List<SACH> DanhSachSach { get; set; }
+        public string Loc { get; set; }
     }
 
 }

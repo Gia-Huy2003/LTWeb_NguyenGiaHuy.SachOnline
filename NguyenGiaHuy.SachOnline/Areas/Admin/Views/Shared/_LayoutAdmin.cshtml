@@ -1,42 +1,86 @@
-﻿<!DOCTYPE html>
+﻿@using NguyenGiaHuy.SachOnline.Models
+@{
+    var admin = Session["TaiKhoanAdmin"] as ADMIN;
+}
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Admin Layout</title>
+    <title>@ViewBag.Title - Trang Quản Trị</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
     <style>
-        .nav {
-            background: black;
-            padding: 10px;
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-            .nav a {
-                color: white;
-                margin-right: 20px;
-                text-decoration: none;
-            }
+        .nav {
+            background-color: #343a40;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
 
-                .nav a:hover {
-                    text-decoration: underline;
-                }
+        .nav-left,
+        .nav-right {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-left a,
+        .nav-right a {
+            color: white;
+            margin-right: 15px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-left a:hover,
+        .nav-right a:hover {
+            text-decoration: underline;
+            color: #00ffd5;
+        }
+
+        .admin-greeting {
+            color: #00ffcc;
+            margin-right: 15px;
+            font-weight: bold;
+        }
 
         .content {
-            padding: 20px;
+            padding: 30px;
         }
     </style>
 </head>
 <body>
     <div class="nav">
-        <b style="color:white; margin-right:20px">SachOnlineAdmin</b>
-        <a href="/Admin/Home/Index">QUẢN LÝ SÁCH</a>
-        <a href="#">QUẢN LÝ CHỦ ĐỀ</a>
-        <a href="#">QUẢN LÝ NHÀ XUẤT BẢN</a>
-        <a href="#">QUẢN LÝ KHÁCH HÀNG</a>
-        <a href="#">QUẢN LÝ ĐƠN HÀNG</a>
-        <a href="/Admin/Home/Logout" style="float:right">Đăng xuất</a>
+        <div class="nav-left">
+            <b style="color:white; margin-right:20px">📘 SachOnlineAdmin</b>
+            <a href="@Url.Action("Index", "Sach", new { area = "Admin" })">Quản lý sách</a>
+            <a href="@Url.Action("QuanLyChuDe", "ChuDe", new { area = "Admin" })">Quản lý chủ đề</a>
+            <a href="@Url.Action("Index", "NhaXuatBan", new { area = "Admin" })">Quản lý nhà xuất bản</a>
+            <a href="@Url.Action("QuanLyKhachHang", "KhachHang", new { area = "Admin" })">Quản lý khách hàng</a>
+            <a href="@Url.Action("QuanLyDonHang", "Admin", new { area = "Admin" })">Quản lý đơn hàng</a>
+        </div>
+
+        <div class="nav-right">
+            @if (admin != null)
+            {
+                <span class="admin-greeting">🛡️ Xin chào, @admin.Username</span>
+            }
+            <a href="@Url.Action("Logout", "Home", new { area = "Admin" })">Đăng xuất</a>
+        </div>
     </div>
 
     <div class="content">
         @RenderBody()
     </div>
+    <!-- CKEditor CDN -->
+<script src="https://cdn.ckeditor.com/4.22.1/ckeditor.js"></script>
 </body>
 </html>

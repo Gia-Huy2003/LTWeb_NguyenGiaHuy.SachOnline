@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PagedList;
 using System.Web.Mvc;
 using NguyenGiaHuy.SachOnline.Models;
 using NguyenGiaHuy.SachOnline.Services;
@@ -45,25 +46,17 @@ namespace NguyenGiaHuy.SachOnline.Controllers
 
         public ActionResult GioHang()
         {
-            // Nếu chưa đăng nhập thì chuyển sang trang Đăng Nhập
             if (Session["TaiKhoan"] == null)
-            {
                 return RedirectToAction("DangNhap", "SachOnline");
-            }
 
             var lstGioHang = LayGioHang();
-
-            // Nếu giỏ hàng trống thì quay lại trang chủ
             if (!lstGioHang.Any())
-            {
                 return RedirectToAction("Index", "SachOnline");
-            }
 
             ViewBag.TongSoLuong = TongSoLuong();
             ViewBag.TongTien = TongTien();
             return View(lstGioHang);
         }
-
 
         public ActionResult GioHangPartial()
         {
@@ -106,20 +99,35 @@ namespace NguyenGiaHuy.SachOnline.Controllers
 
         [HttpPost]
         [ActionName("DatHang")]
+
         public ActionResult XuLyDatHang(FormCollection f)
         {
             KHACHHANG kh = (KHACHHANG)Session["TaiKhoan"];
+            string diaChiGiao = f["DiaChi"];
+            string phuongThuc = f["PhuongThucThanhToan"];
+
+            // Tạo mã đơn hàng dạng "DHxxxxxx"
+            Random rnd = new Random();
+            string maDon = "DH" + rnd.Next(100000, 999999);
+
+            // Tạo đơn đặt hàng
             DONDATHANG ddh = new DONDATHANG
             {
                 KhachHangID = kh.KhachHangID,
                 NgayDat = DateTime.Now,
-                NgayGiao = DateTime.Parse(f["NgayGiao"]),
+                DiaChiGiao = diaChiGiao,
                 TinhTrangDonHang = false,
-                DaThanhToan = false
+                DaThanhToan = phuongThuc == "VNPay",
+                PhuongThucThanhToan = phuongThuc,
+                MaDonHang = maDon,
+
+                TrangThaiDonHang = "Đang xử lý" // hoặc trạng thái mặc định nào bạn muốn
             };
+
             dbSachOnlineDataContext.DONDATHANGs.Add(ddh);
             dbSachOnlineDataContext.SaveChanges();
 
+            // Thêm các chi tiết đặt hàng
             foreach (var item in LayGioHang())
             {
                 CHITIETDATHANG ct = new CHITIETDATHANG
@@ -131,23 +139,19 @@ namespace NguyenGiaHuy.SachOnline.Controllers
                 };
                 dbSachOnlineDataContext.CHITIETDATHANGs.Add(ct);
             }
+
             dbSachOnlineDataContext.SaveChanges();
 
-            try
-            {
-                string email = kh.Email;
-                string tieuDe = "Xác nhận đơn hàng từ SachOnline";
-                string noiDung = $@"
-                    <h3>Xin chào {kh.TenKhachHang}!</h3>
-                    <p>Đơn hàng của bạn đã được tiếp nhận vào lúc {ddh.NgayDat:HH:mm dd/MM/yyyy}.</p>
-                    <p>Tổng tiền: <strong>{TongTien():N0} VND</strong></p>
-                    <p>Chúng tôi sẽ giao hàng trước ngày {ddh.NgayGiao:dd/MM/yyyy}.</p>";
-                new EmailService().SendOrderConfirmationEmail(email, tieuDe, noiDung);
-            }
-            catch (Exception) { }
-
+            // Xóa giỏ hàng khỏi session
             Session["GioHang"] = null;
-            return RedirectToAction("XacNhanDonHang", "GioHang");
+
+            // Nếu chọn chuyển khoản thì chuyển qua trang mã QR
+            if (phuongThuc == "VNPay")
+                return RedirectToAction("ThanhToanVNPay", new { id = ddh.DonDatHangID });
+
+            // Nếu COD thì hiển thị xác nhận
+            TempData["MaDonHang"] = ddh.MaDonHang;
+            return RedirectToAction("XacNhanDonHang");
         }
 
         public ActionResult XacNhanDonHang()
@@ -155,15 +159,20 @@ namespace NguyenGiaHuy.SachOnline.Controllers
             return View();
         }
 
-        public ActionResult DonHangCuaToi()
+        public ActionResult DonHangCuaToi(int? page)
         {
-            if (Session["TaiKhoan"] == null) return RedirectToAction("DangNhap", "SachOnline");
+            if (Session["TaiKhoan"] == null)
+                return RedirectToAction("DangNhap", "SachOnline");
+
             KHACHHANG kh = (KHACHHANG)Session["TaiKhoan"];
             var donhang = dbSachOnlineDataContext.DONDATHANGs
                 .Where(d => d.KhachHangID == kh.KhachHangID)
-                .OrderByDescending(d => d.NgayDat)
-                .ToList();
-            return View(donhang);
+                .OrderByDescending(d => d.NgayDat);
+
+            int pageSize = 9; // số đơn hàng trên 1 trang
+            int pageNumber = (page ?? 1); // trang hiện tại
+
+            return View(donhang.ToPagedList(pageNumber, pageSize));
         }
 
         public ActionResult XacNhanDaNhanHang(int id)
@@ -174,10 +183,26 @@ namespace NguyenGiaHuy.SachOnline.Controllers
             donHang.TinhTrangDonHang = true;
             donHang.DaThanhToan = true;
             donHang.NgayGiao = DateTime.Now;
+
+            // ❗ Đặt trước SaveChanges để được lưu vào DB
+            donHang.TrangThaiDonHang = "Đã nhận";
+
             dbSachOnlineDataContext.SaveChanges();
 
             TempData["ThongBao"] = $"Đã xác nhận đơn hàng #{id} là đã giao thành công.";
             return RedirectToAction("DonHangCuaToi");
+        }
+
+        public ActionResult ThanhToanVNPay(int id)
+        {
+            var ddh = dbSachOnlineDataContext.DONDATHANGs.FirstOrDefault(d => d.DonDatHangID == id);
+            if (ddh == null) return HttpNotFound();
+
+            ViewBag.TongTien = dbSachOnlineDataContext.CHITIETDATHANGs
+                .Where(c => c.DonDatHangID == id)
+                .Sum(c => c.GiaTien * c.SoLuong);
+
+            return View("ThanhToanTrucTuyen", ddh);
         }
     }
 }

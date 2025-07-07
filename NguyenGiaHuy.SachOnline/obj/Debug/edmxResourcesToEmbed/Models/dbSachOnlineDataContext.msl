@@ -32,6 +32,10 @@
     <EntitySetMapping Name="DONDATHANGs">
       <EntityTypeMapping TypeName="SachOnline1Model.DONDATHANG">
         <MappingFragment StoreEntitySet="DONDATHANG">
+          <ScalarProperty Name="TrangThaiDonHang" ColumnName="TrangThaiDonHang" />
+          <ScalarProperty Name="MaDonHang" ColumnName="MaDonHang" />
+          <ScalarProperty Name="PhuongThucThanhToan" ColumnName="PhuongThucThanhToan" />
+          <ScalarProperty Name="DiaChiGiao" ColumnName="DiaChiGiao" />
           <ScalarProperty Name="DaThanhToan" ColumnName="DaThanhToan" />
           <ScalarProperty Name="TinhTrangDonHang" ColumnName="TinhTrangDonHang" />
           <ScalarProperty Name="NgayGiao" ColumnName="NgayGiao" />
@@ -67,6 +71,8 @@
     <EntitySetMapping Name="SACHes">
       <EntityTypeMapping TypeName="SachOnline1Model.SACH">
         <MappingFragment StoreEntitySet="SACH">
+          <ScalarProperty Name="GiaKhuyenMai" ColumnName="GiaKhuyenMai" />
+          <ScalarProperty Name="MoTaNgan" ColumnName="MoTaNgan" />
           <ScalarProperty Name="Mota" ColumnName="Mota" />
           <ScalarProperty Name="SachID" ColumnName="SachID" />
           <ScalarProperty Name="TenSach" ColumnName="TenSach" />
@@ -132,5 +138,14 @@
     </FunctionImportMapping>
     <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="SachOnline1Model.Store.sp_renamediagram" />
     <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="SachOnline1Model.Store.sp_upgraddiagrams" />
+    <EntitySetMapping Name="THONGBAOs">
+      <EntityTypeMapping TypeName="SachOnline1Model.THONGBAO">
+        <MappingFragment StoreEntitySet="THONGBAO">
+          <ScalarProperty Name="NgayCapNhat" ColumnName="NgayCapNhat" />
+          <ScalarProperty Name="NoiDung" ColumnName="NoiDung" />
+          <ScalarProperty Name="ThongBaoID" ColumnName="ThongBaoID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>

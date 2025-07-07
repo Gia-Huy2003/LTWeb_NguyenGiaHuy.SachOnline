@@ -1,5 +1,7 @@
-﻿@{ ViewBag.Title = "DangKy";
-                Layout = "~/Views/Shared/_LayoutUser.cshtml"; }
+﻿@{
+    ViewBag.Title = "Đăng ký";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
 
 <style type="text/css">
     h4 {
@@ -41,13 +43,20 @@
         width: 154px;
     }
 
-        input[type="submit"]:hover,
-        input[type="reset"]:hover {
-            background-color: #0056b3;
-        }
+    input[type="submit"]:hover,
+    input[type="reset"]:hover {
+        background-color: #0056b3;
+    }
 
     .error-message {
         color: red;
+    }
+
+    .show-password {
+        text-align: left;
+        padding-top: 0;
+        font-size: 14px;
+        padding-left: 10px;
     }
 </style>
 
@@ -56,43 +65,66 @@
     <h2>ĐĂNG KÝ THÀNH VIÊN</h2>
     @using (Html.BeginForm("DangKy", "SachOnline"))
     {
-<tr>
-    <td>Họ tên:</td>
-    <td>@Html.TextBox("TenKhachHang") <span class="error-message">@ViewData["err1"]</span></td>
-</tr>
-                <tr>
-                    <td>Tên đăng nhập:</td>
-                    <td>@Html.TextBox("TenDN") <span class="error-message">@ViewData["err2"]</span></td>
-                </tr>
-                                <tr>
-                                    <td>Mật khẩu:</td>
-                                    <td>@Html.Password("MatKhau") <span class="error-message">@ViewData["err3"]</span></td>
-                                </tr>
-                                                <tr>
-                                                    <td>Mật khẩu nhập lại:</td>
-                                                    <td>@Html.Password("MatKhauNL") <span class="error-message">@ViewData["err4"]</span></td>
-                                                </tr>
-                                                                <tr>
-                                                                    <td>Email:</td>
-                                                                    <td>@Html.TextBox("Email") <span class="error-message">@ViewData["err5"]</span></td>
-                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>Điện thoại:</td>
-                                                                                    <td>@Html.TextBox("SoDienThoai") <span class="error-message">@ViewData["err6"]</span></td>
-                                                                                </tr>
-                                                                                                <tr>
-                                                                                                    <td>Địa chỉ:</td>
-                                                                                                    <td><input type="text" name="DiaChi" /></td>
-                                                                                                </tr>
-                                                                                                                <tr>
-                                                                                                                    <td></td>
-                                                                                                                    <td>
-                                                                                                                        <input type="submit" value="Đăng ký" /> <input type="reset" value="Xóa Thông Tin" />
-                                                                                                                    </td>
-                                                                                                                </tr>}
+        <tr>
+            <td>Họ tên:</td>
+            <td>@Html.TextBox("TenKhachHang") <span class="error-message">@ViewData["err1"]</span></td>
+        </tr>
+        <tr>
+            <td>Tên đăng nhập:</td>
+            <td>@Html.TextBox("TenDN") <span class="error-message">@ViewData["err2"]</span></td>
+        </tr>
+        <tr>
+            <td>Mật khẩu:</td>
+            <td>
+                @Html.Password("MatKhau", null, new { id = "MatKhau" })
+                <span class="error-message">@ViewData["err3"]</span>
+            </td>
+        </tr>
+        <tr>
+            <td>Nhập lại mật khẩu:</td>
+            <td>
+                @Html.Password("MatKhauNL", null, new { id = "MatKhauNL" })
+                <span class="error-message">@ViewData["err4"]</span>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="show-password">
+                <input type="checkbox" id="showPasswords" onclick="toggleAllPasswords()" />
+                <label for="showPasswords">Hiển thị mật khẩu</label>
+            </td>
+        </tr>
+        <tr>
+            <td>Email:</td>
+            <td>@Html.TextBox("Email") <span class="error-message">@ViewData["err5"]</span></td>
+        </tr>
+        <tr>
+            <td>Điện thoại:</td>
+            <td>@Html.TextBox("SoDienThoai") <span class="error-message">@ViewData["err6"]</span></td>
+        </tr>
+        <tr>
+            <td>Địa chỉ:</td>
+            <td><input type="text" name="DiaChi" /></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Đăng ký" />
+                <input type="reset" value="Xóa Thông Tin" />
+            </td>
+        </tr>
+    }
 </table>
 
 <script type="text/javascript">
+    function toggleAllPasswords() {
+        const pw1 = document.getElementById("MatKhau");
+        const pw2 = document.getElementById("MatKhauNL");
+        const type = pw1.type === "password" ? "text" : "password";
+        pw1.type = type;
+        pw2.type = type;
+    }
+
     $(document).ready(function () {
         var successMessage = '@TempData["SuccessMessage"]';
         if (successMessage) {

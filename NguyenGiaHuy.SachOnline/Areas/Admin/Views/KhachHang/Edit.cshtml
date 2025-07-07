@@ -1,0 +1,72 @@
+﻿@model NguyenGiaHuy.SachOnline.Models.KHACHHANG
+
+@{
+    ViewBag.Title = "Chỉnh sửa khách hàng";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2 class="text-primary mb-4">✏️ Chỉnh sửa khách hàng</h2>
+
+@using (Html.BeginForm("Edit", "KhachHang", FormMethod.Post, new { area = "Admin" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.KhachHangID)
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.TenKhachHang, "Tên khách hàng")
+        @Html.TextBoxFor(m => m.TenKhachHang, new { @class = "form-control", required = "required" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.DiaChi, "Địa chỉ")
+        @Html.TextBoxFor(m => m.DiaChi, new { @class = "form-control", required = "required" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Email, "Email")
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", required = "required", type = "email" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.SoDienThoai, "Số điện thoại")
+        @Html.TextBoxFor(m => m.SoDienThoai, new { @class = "form-control", required = "required" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.TenDN, "Tên đăng nhập")
+        @Html.TextBoxFor(m => m.TenDN, new { @class = "form-control", required = "required" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.MatKhau, "Mật khẩu")
+        <div class="input-group">
+            @Html.TextBoxFor(m => m.MatKhau, new { @class = "form-control", type = "password", id = "MatKhau" })
+            <div class="input-group-append">
+                <span class="input-group-text" onclick="togglePassword()" style="cursor:pointer;">👁</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Phân quyền:</label><br />
+        <label><input type="radio" name="PhanQuyen" value="User" checked /> User</label>
+        <label style="margin-left: 20px;"><input type="radio" name="PhanQuyen" value="Admin" /> Admin</label>
+    </div>
+
+    <button type="submit" class="btn btn-success">💾 Lưu thay đổi</button>
+    <a href="@Url.Action("Index", "KhachHang", new { area = "Admin" })" class="btn btn-secondary">🔙 Quay lại</a>
+}
+
+@section Scripts {
+    <script src="https://cdn.ckeditor.com/4.22.1/ckeditor.js"></script>
+    <script>
+        // Kích hoạt CKEditor cho textarea DiaChi
+        CKEDITOR.replace('DiaChi');
+
+        // Toggle hiển thị/ẩn mật khẩu
+        function togglePassword() {
+            var pw = document.getElementById("MatKhau");
+            pw.type = (pw.type === "password") ? "text" : "password";
+        }
+    </script>
+}
