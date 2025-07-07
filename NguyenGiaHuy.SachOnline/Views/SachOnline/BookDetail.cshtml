@@ -45,7 +45,6 @@ else
         .book-info p {
             font-size: 16px;
         }
-
         .price-sale {
             color: red;
             font-size: 22px;
@@ -65,11 +64,13 @@ else
             font-size: 14px;
             margin-left: 8px;
         }
-
         .book-actions {
             margin-top: 20px;
         }
 
+        .book-actions {
+            margin-top: 20px;
+        }
         .mota-chi-tiet {
             margin-top: 30px;
             background-color: #f9f9f9;
@@ -97,7 +98,6 @@ else
 
         <div class="book-info">
             <h3>@Model.TenSach</h3>
-
             <p><strong>Giá bán:</strong>
                 @if (Model.GiaKhuyenMai != null && Model.GiaKhuyenMai < Model.GiaBan)
                     {
@@ -111,7 +111,7 @@ else
                         <span class="price-normal">@Model.GiaBan.Value.ToString("N0") VNĐ</span>
                     }
             </p>
-
+            <p><strong>Giá bán:</strong> @Html.FormatValue(Model.GiaBan, "{0:#,##0}") VNĐ</p>
             <p><strong>Ngày cập nhật:</strong> @Html.FormatValue(Model.NgayCapNhat, "{0:dd/MM/yyyy}")</p>
             <p><strong>Mô tả ngắn:</strong> @Model.MoTaNgan</p>
 
@@ -129,12 +129,13 @@ else
             @Html.Raw((Model.Mota ?? "Chưa có mô tả.").Replace("\n", "</p><p>&nbsp;&nbsp;&nbsp;&nbsp;"))
         </p>
     </div>
-
+    <!-- Gợi ý 3 sách cùng loại -->
     <div class="related-books">
         <h4>Sách cùng chủ đề</h4>
         <div class="d-flex flex-row">
             @{
                 var relatedBooks = new NguyenGiaHuy.SachOnline.Models.SachOnline1Entities1().SACHes
+                    .Where(s => s.ChuDeID == Model.ChuDeID && s.SachID != Model.SachID)
                     .OrderByDescending(s => s.NgayCapNhat)
                     .Take(3)
                     .ToList();

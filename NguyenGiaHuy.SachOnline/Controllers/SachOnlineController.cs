@@ -193,7 +193,12 @@ namespace NguyenGiaHuy.SachOnline.Controllers
 
             return View(ketQuaPhanTrang);
         }
-
+        public ActionResult TimKiem(string keyword)
+        {
+            var kq = data.SACHes.Where(s => s.TenSach.Contains(keyword)).ToList();
+            ViewBag.TuKhoa = keyword;
+            return View("KetQuaTimKiem", kq);
+        }
         public ActionResult ChuDePartial()
         {
             var chudeList = data.CHUDEs.ToList();

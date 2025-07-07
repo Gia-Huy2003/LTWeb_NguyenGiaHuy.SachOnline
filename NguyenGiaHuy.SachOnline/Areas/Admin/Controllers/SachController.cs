@@ -75,7 +75,7 @@ namespace NguyenGiaHuy.SachOnline.Areas.Admin.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
+            // Nếu lỗi -> nạp lại SelectList
             ViewBag.ChuDeID = new SelectList(db.CHUDEs, "ChuDeID", "TenChuDe", sach.ChuDeID);
             ViewBag.NhaXuatBanID = new SelectList(db.NHAXUATBANs, "NhaXuatBanID", "TenNhaXuatBan", sach.NhaXuatBanID);
             ViewBag.TacGiaID = new SelectList(db.TACGIAs, "TacGiaID", "TenTacGia", sach.TacGiaID);
