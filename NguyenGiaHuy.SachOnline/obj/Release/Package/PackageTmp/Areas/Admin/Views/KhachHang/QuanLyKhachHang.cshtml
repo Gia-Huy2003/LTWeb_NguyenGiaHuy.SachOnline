@@ -1,0 +1,112 @@
+﻿@model List<NguyenGiaHuy.SachOnline.Models.KHACHHANG>
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Quản lý khách hàng";
+}
+
+<style>
+    .table td, .table th {
+        vertical-align: middle;
+        text-align: center;
+        padding: 12px;
+    }
+
+    .btn {
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        margin: 2px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-edit {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn:hover {
+        opacity: 0.85;
+    }
+
+    h2.page-title {
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .password-toggle {
+        cursor: pointer;
+        font-size: 18px;
+        margin-left: 5px;
+        color: #007bff;
+    }
+
+    .pw-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+<h2 class="page-title">👥 Quản lý khách hàng</h2>
+
+<table class="table table-bordered table-hover bg-white">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Tên KH</th>
+            <th>Địa chỉ</th>
+            <th>Email</th>
+            <th>Điện thoại</th>
+            <th>Tên ĐN</th>
+            <th>Mật khẩu</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var kh in Model)
+        {
+            <tr>
+                <td>@kh.KhachHangID</td>
+                <td>@kh.TenKhachHang</td>
+                <td>@kh.DiaChi</td>
+                <td>@kh.Email</td>
+                <td>@kh.SoDienThoai</td>
+                <td>@kh.TenDN</td>
+                <td>
+                    <div class="pw-container">
+                        <input type="password" class="form-control pw-field" value="@kh.MatKhau" readonly style="max-width: 150px;" />
+                        <span class="password-toggle" onclick="togglePassword(this)">👁</span>
+                    </div>
+                </td>
+                <td>
+                    <a href="@Url.Action("Edit", "KhachHang", new { area = "Admin", id = kh.KhachHangID })" class="btn btn-edit">Sửa</a>
+                    <a href="@Url.Action("Delete", "KhachHang", new { area = "Admin", id = kh.KhachHangID })"
+                       class="btn btn-delete" onclick="return confirm('Xác nhận xoá khách hàng này?');">Xoá</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        function togglePassword(icon) {
+            const input = icon.previousElementSibling;
+            if (input.type === "password") {
+                input.type = "text";
+                icon.textContent = "🙈";
+            } else {
+                input.type = "password";
+                icon.textContent = "👁";
+            }
+        }
+    </script>
+}

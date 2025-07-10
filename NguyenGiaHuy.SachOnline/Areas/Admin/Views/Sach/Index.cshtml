@@ -1,0 +1,157 @@
+﻿@model List<NguyenGiaHuy.SachOnline.Models.SACH>
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        padding-left: 0;
+        margin-top: 20px;
+    }
+
+    .pagination li {
+        margin: 0 5px;
+    }
+
+    .pagination a {
+        display: inline-block;
+        padding: 6px 12px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+    .pagination a:hover {
+        background-color: #0056b3;
+    }
+
+    .pagination .active a {
+        background-color: #dc3545;
+        cursor: default;
+    }
+
+    .pagination .disabled a {
+        background-color: #cccccc;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    .table td, .table th {
+        vertical-align: middle;
+        text-align: center;
+        padding: 12px;
+    }
+
+    .table td img {
+        display: block;
+        margin: 0 auto;
+    }
+
+    .btn {
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        margin: 2px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-edit {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-detail {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn:hover {
+        opacity: 0.85;
+    }
+
+    .add-button {
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+</style>
+    <!-- TIÊU ĐỀ TRANG -->
+<h2 style="text-align:center; font-size:28px; font-weight:bold; margin-bottom:20px; color:#333;">📚 Quản lý sách</h2>
+
+<div class="add-button">
+    <a href="@Url.Action("Create", "Sach", new { area = "Admin" })" class="btn btn-success">➕ Thêm sách</a>
+</div>
+
+<table class="table table-bordered table-hover bg-white">
+    <thead class="thead-dark">
+        <tr>
+            <th>Tên sách</th>
+            <th>Mô tả</th>
+            <th>Ảnh bìa</th>
+            <th>Ngày cập nhật</th>
+            <th>Số lượng</th>
+            <th>Giá bán</th>
+            <th>Chủ đề</th>
+            <th>Nhà xuất bản</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var sach in Model)
+        {
+            <tr>
+                <td>@sach.TenSach</td>
+                <td>@Html.Raw(sach.Mota?.Length > 50 ? sach.Mota.Substring(0, 50) + "..." : sach.Mota)</td>
+                <td>
+                    <img src="@Url.Content("~/Images/" + sach.anhSP)" width="60" class="img-thumbnail" />
+                </td>
+                <td>@(sach.NgayCapNhat.HasValue ? sach.NgayCapNhat.Value.ToString("dd-MM-yyyy") : "")</td>
+                <td>@sach.SoLuong</td>
+                <td>@(((float)sach.GiaBan).ToString("N0"))</td>
+                <td>@sach.ChuDeID</td>
+                <td>@sach.NhaXuatBanID</td>
+                <td>
+                    <a href="@Url.Action("Edit", "Sach", new { area = "Admin", id = sach.SachID })" class="btn btn-edit">Sửa</a>
+                    <a href="@Url.Action("Details", "Sach", new { area = "Admin", id = sach.SachID })" class="btn btn-detail">Chi tiết</a>
+                    <a href="@Url.Action("Delete", "Sach", new { area = "Admin", id = sach.SachID })" class="btn btn-delete"
+                       onclick="return confirm('Bạn có chắc muốn xóa sách này không?');">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- PHÂN TRANG -->
+<nav>
+    <ul class="pagination">
+        <li class="@(ViewBag.Page == 1 ? "disabled" : "")">
+            <a href="?page=1">«</a>
+        </li>
+        <li class="@(ViewBag.Page == 1 ? "disabled" : "")">
+            <a href="?page=@(ViewBag.Page - 1)">←</a>
+        </li>
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <li class="@(ViewBag.Page == i ? "active" : "")">
+                <a href="?page=@i">@i</a>
+            </li>
+        }
+        <li class="@(ViewBag.Page == ViewBag.TotalPages ? "disabled" : "")">
+            <a href="?page=@(ViewBag.Page + 1)">→</a>
+        </li>
+        <li class="@(ViewBag.Page == ViewBag.TotalPages ? "disabled" : "")">
+            <a href="?page=@ViewBag.TotalPages">»</a>
+        </li>
+    </ul>
+</nav>

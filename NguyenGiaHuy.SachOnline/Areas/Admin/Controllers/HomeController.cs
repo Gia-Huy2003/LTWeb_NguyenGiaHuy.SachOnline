@@ -1,21 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
 namespace NguyenGiaHuy.SachOnline.Areas.Admin.Controllers
 {
     public class HomeController : Controller
     {
+        // Trang chủ admin
         public ActionResult Index()
         {
             if (Session["TaiKhoanAdmin"] == null)
-                return RedirectToAction("DangNhap", "SachOnline");
+            {
+                // Nếu chưa đăng nhập, chuyển về trang đăng nhập ngoài khu vực Admin
+                return RedirectToAction("DangNhap", "SachOnline", new { area = "" });
+            }
 
-            return View();
+            // Nếu đã đăng nhập, chuyển đến trang quản lý sách
+            return RedirectToAction("Index", "Sach");
         }
 
+        // Đăng xuất admin
         public ActionResult Logout()
         {
             Session["TaiKhoanAdmin"] = null;

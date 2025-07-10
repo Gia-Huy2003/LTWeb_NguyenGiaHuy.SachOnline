@@ -1,0 +1,80 @@
+﻿@model List<NguyenGiaHuy.SachOnline.Models.NHAXUATBAN>
+@{
+    ViewBag.Title = "Quản lý Nhà xuất bản";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .table td, .table th {
+        vertical-align: middle;
+        text-align: center;
+        padding: 12px;
+    }
+
+    .btn {
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        margin: 2px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-edit {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn:hover {
+        opacity: 0.85;
+    }
+
+    .add-button {
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+
+    h2.page-title {
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+</style>
+
+<h2 class="page-title">🏢 Quản lý Nhà xuất bản</h2>
+
+<div class="add-button">
+    <a href="@Url.Action("Create", "NhaXuatBan", new { area = "Admin" })" class="btn btn-success">➕ Thêm Nhà xuất bản</a>
+</div>
+
+<table class="table table-bordered table-hover bg-white">
+    <thead class="thead-dark">
+        <tr>
+            <th>Mã NXB</th>
+            <th>Tên Nhà xuất bản</th>
+            <th>Địa chỉ</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var nxb in Model)
+        {
+            <tr>
+                <td>@nxb.NhaXuatBanID</td>
+                <td>@nxb.TenNhaXuatBan</td>
+                <td>@nxb.DiaChi</td>
+                <td>
+                    <a href="@Url.Action("Edit", "NhaXuatBan", new { area = "Admin", id = nxb.NhaXuatBanID })" class="btn btn-edit">Sửa</a>
+                    <a href="@Url.Action("Delete", "NhaXuatBan", new { area = "Admin", id = nxb.NhaXuatBanID })" class="btn btn-delete"
+                       onclick="return confirm('Bạn có chắc muốn xóa nhà xuất bản này không?');">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,65 @@
+﻿@model List<NguyenGiaHuy.SachOnline.Models.DONDATHANG>
+
+@using NguyenGiaHuy.SachOnline.Models
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Quản lý đơn hàng";
+
+    // Tạo đối tượng db để truy vấn tổng tiền từ CTDATHANGs
+    var db = new SachOnline1Entities1();
+}
+
+<h2>Quản lý đơn hàng</h2>
+
+<form method="get" class="form-inline mb-3">
+    <label for="filter" class="mr-2">Lọc theo:</label>
+    <select id="filter" name="filter" class="form-control mr-2" onchange="this.form.submit()">
+        <option value="">-- Tất cả --</option>
+        <option value="week" @(Request["filter"] == "week" ? "selected" : "")>Tuần này</option>
+        <option value="month" @(Request["filter"] == "month" ? "selected" : "")>Tháng này</option>
+    </select>
+</form>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Mã đơn</th>
+            <th>Khách hàng</th>
+            <th>Ngày đặt</th>
+            <th>Trạng thái</th>
+            <th>Tổng tiền</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var dh in Model)
+        {
+            // ✅ Tính tổng tiền từ bảng CTDATHANGs (dựa vào MaDonHang)
+               var tongTien = db.CHITIETDATHANGs
+                     .Where(ct => ct.DonDatHangID == dh.DonDatHangID)
+                     .ToList()
+                     .Sum(ct => (ct.GiaTien ?? 0) * (ct.SoLuong ?? 0));
+
+            <tr>
+                <td>@dh.MaDonHang</td>
+                 <td>@(dh.KHACHHANG != null ? dh.KHACHHANG.TenKhachHang : "Không rõ")</td>
+                <td>@(dh.NgayDat?.ToString("dd/MM/yyyy HH:mm"))</td>
+                <td>@dh.TrangThaiDonHang</td>
+                <td>@String.Format("{0:#,##0} VNĐ", tongTien)</td>
+                <td>
+                    @if (dh.TrangThaiDonHang == "Đang xử lý")
+                    {
+                        <a href="@Url.Action("DuyetDonHang", "Admin", new { area = "Admin", id = dh.DonDatHangID })"
+                           class="btn btn-success btn-sm">
+                            Duyệt
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Đã duyệt</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

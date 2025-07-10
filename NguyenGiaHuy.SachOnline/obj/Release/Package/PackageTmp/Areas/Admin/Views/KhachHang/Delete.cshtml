@@ -1,0 +1,19 @@
+﻿@model NguyenGiaHuy.SachOnline.Models.KHACHHANG
+
+@{
+    ViewBag.Title = "Xác nhận xoá";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h3 class="text-danger">⚠️ Bạn có chắc muốn xoá khách hàng "@Model.TenKhachHang" không?</h3>
+
+<div class="mt-4">
+    @using (Html.BeginForm("Delete", "KhachHang", FormMethod.Post, new { area = "Admin" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.KhachHangID)
+
+        <button type="submit" class="btn btn-danger">Xoá</button>
+        <a href="@Url.Action("Index", "KhachHang", new { area = "Admin" })" class="btn btn-secondary ml-2">Huỷ</a>
+    }
+</div>

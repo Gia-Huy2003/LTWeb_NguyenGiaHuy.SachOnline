@@ -1,0 +1,87 @@
+﻿@model List<NguyenGiaHuy.SachOnline.Models.CHUDE>
+@{
+    ViewBag.Title = "Quản lý chủ đề";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .table td, .table th {
+        vertical-align: middle;
+        text-align: center;
+        padding: 12px;
+    }
+
+    .btn {
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        margin: 2px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-edit {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn:hover {
+        opacity: 0.85;
+    }
+
+    .add-button {
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+
+    h2.page-title {
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+</style>
+
+<h2 class="page-title">📚 Quản lý chủ đề</h2>
+
+<div class="add-button">
+    <a href="@Url.Action("Create", "ChuDe", new { area = "Admin" })" class="btn btn-success">➕ Thêm chủ đề</a>
+</div>
+
+<table class="table table-bordered table-hover bg-white">
+    <thead class="thead-dark">
+        <tr>
+            <th>Mã chủ đề</th>
+            <th>Tên chủ đề</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cd in Model)
+        {
+            <tr>
+                <td>@cd.ChuDeID</td>
+                <td>@cd.TenChuDe</td>
+                <td>
+                    <a href="@Url.Action("Edit", "ChuDe", new { area = "Admin", id = cd.ChuDeID })" class="btn btn-edit">Sửa</a>
+                    <a href="@Url.Action("Delete", "ChuDe", new { area = "Admin", id = cd.ChuDeID })" class="btn btn-delete"
+                       onclick="return confirm('Bạn có chắc muốn xóa chủ đề này không?');">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+    @section Scripts {
+    <script src="https://cdn.ckeditor.com/4.22.1/ckeditor.js"></script>
+    <script>
+        // Nếu có textarea để nhập nội dung mô tả chủ đề thì gắn CKEditor
+        document.querySelectorAll('textarea').forEach(function (textarea) {
+            CKEDITOR.replace(textarea.id);
+        });
+    </script>
+}

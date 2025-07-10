@@ -7,7 +7,8 @@ namespace NguyenGiaHuy.SachOnline.Models
 {
     public class ChuDeSachViewModel
     {
-        public CHUDE ChuDe { get; set; }
-        public List<SACH> Saches { get; set; }
+        public SACH Sach { get; set; }
+        public string TenChuDe { get; set; }
+        public string TenNXB { get; set; }
     }
 }
