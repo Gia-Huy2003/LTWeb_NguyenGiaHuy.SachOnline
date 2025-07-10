@@ -22,6 +22,7 @@
         <AssociationConnector Association="SachOnline1Model.FK__SACH__TacGiaID__4BAC3F29" ManuallyRouted="false" />
         <AssociationConnector Association="SachOnline1Model.FK__VIETSACH__SachID__4CA06362" ManuallyRouted="false" />
         <AssociationConnector Association="SachOnline1Model.FK__VIETSACH__TacGia__4D94879B" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="SachOnline1Model.sysdiagram" Width="1.5" PointX="7.375" PointY="0.75" />
         <EntityTypeShape EntityType="SachOnline1Model.THONGBAO" Width="1.5" PointX="7.375" PointY="3.75" />
       </Diagram>
     </edmx:Diagrams>

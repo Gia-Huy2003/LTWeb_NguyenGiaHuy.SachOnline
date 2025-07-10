@@ -92,6 +92,11 @@ namespace NguyenGiaHuy.SachOnline.Controllers
             db.Entry(kh).State = System.Data.Entity.EntityState.Modified;
             db.SaveChanges();
 
+            // ✅ Cập nhật mật khẩu
+            kh.MatKhau = model.MatKhauMoi;
+            db.Entry(kh).State = System.Data.Entity.EntityState.Modified;
+            db.SaveChanges();
+            // ✅ Thoát session và hiển thị thông báo
             Session["User"] = null;
             Session["UserName"] = null;
             TempData["ThongBao"] = "Đổi mật khẩu thành công. Vui lòng đăng nhập lại.";

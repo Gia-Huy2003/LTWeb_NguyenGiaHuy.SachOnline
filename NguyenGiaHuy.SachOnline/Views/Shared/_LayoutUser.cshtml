@@ -66,6 +66,17 @@
             border-radius: 4px;
         }
         .pagination li.active a { background-color: #555; border-color: #555; }
+        .pagination li.active a {
+            background-color: #555;
+            border-color: #555;
+        }
+
+        .search-form 
+        {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
         .pagination li.disabled a {
             pointer-events: none;
             background-color: #ccc;
@@ -118,7 +129,7 @@
                     <li class="nav-item">@Html.ActionLink("Giới thiệu", "About", "Home", null, new { @class = "nav-link" })</li>
                     <li class="nav-item">@Html.ActionLink("Liên hệ", "Contact", "Home", null, new { @class = "nav-link" })</li>
                 </ul>
-
+                <!-- Thanh tìm kiếm -->
                 @using (Html.BeginForm("TimKiem", "SachOnline", FormMethod.Get, new { @class = "search-form mx-auto" }))
                 {
                     <input class="form-control" type="search" name="keyword" placeholder="Tìm sách..." aria-label="Tìm kiếm" style="min-width: 200px;" />
@@ -144,7 +155,7 @@
             </div>
         </div>
     </nav>
-
+    <!-- ✅ Hiển thị slider chỉ khi ở trang chủ -->
     @if (ViewBag.Title == "Trang Chủ - Danh sách sách mới")
     {
         @Html.Partial("SliderPartial")

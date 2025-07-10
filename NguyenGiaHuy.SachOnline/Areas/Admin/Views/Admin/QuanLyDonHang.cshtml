@@ -1,5 +1,4 @@
 ﻿@model List<NguyenGiaHuy.SachOnline.Models.DONDATHANG>
-
 @using NguyenGiaHuy.SachOnline.Models
 @{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
@@ -12,6 +11,13 @@
 <h2>Quản lý đơn hàng</h2>
 
 <form method="get" class="form-inline mb-3">
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Quản lý đơn hàng";
+}
+
+<h2>Quản lý đơn hàng</h2>
+    <form method="get" class="form-inline mb-3">
     <label for="filter" class="mr-2">Lọc theo:</label>
     <select id="filter" name="filter" class="form-control mr-2" onchange="this.form.submit()">
         <option value="">-- Tất cả --</option>
@@ -61,5 +67,24 @@
                 </td>
             </tr>
         }
+
+    @foreach (var dh in Model) {
+        <tr>
+            <td>@dh.MaDonHang</td>
+            <td>@dh.KHACHHANG.TenKhachHang</td>
+            <td>@(dh.NgayDat?.ToString("dd/MM/yyyy HH:mm"))</td>
+            <td>@dh.TrangThaiDonHang</td>
+            <td>
+                @if(dh.TrangThaiDonHang == "Đang xử lý") {
+                    <a href="@Url.Action("DuyetDonHang", "Admin", new { area = "Admin", id = dh.DonDatHangID })"
+                       class="btn btn-success btn-sm">
+                       Duyệt
+                    </a>
+                } else {
+                    <span class="text-muted">Đã duyệt</span>
+                }
+            </td>
+        </tr>
+    }
     </tbody>
 </table>

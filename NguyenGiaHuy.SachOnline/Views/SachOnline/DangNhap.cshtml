@@ -129,7 +129,9 @@
             <input type="checkbox" id="showPassword" onclick="togglePasswordVisibility()" />
             <label for="showPassword">Hiển thị mật khẩu</label>
         </div>
-
+            @Html.Password("MatKhau", new { @class = "form-control" })
+            <span class="error-message">@ViewBag.Err2</span>
+        </div>
         <input type="submit" value="Đăng nhập" class="btn-block btn-login" />
     }
 
@@ -149,3 +151,6 @@
         }
     }
 </script>
+        <input type="reset" value="Đăng ký" class="btn-block btn-reset" />
+    </div>
+</div>

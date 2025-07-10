@@ -194,6 +194,12 @@ namespace NguyenGiaHuy.SachOnline.Controllers
             return View(ketQuaPhanTrang);
         }
 
+        public ActionResult TimKiem(string keyword)
+        {
+            var kq = data.SACHes.Where(s => s.TenSach.Contains(keyword)).ToList();
+            ViewBag.TuKhoa = keyword;
+            return View("KetQuaTimKiem", kq);
+        }
         public ActionResult ChuDePartial()
         {
             var chudeList = data.CHUDEs.ToList();
@@ -230,6 +236,7 @@ namespace NguyenGiaHuy.SachOnline.Controllers
         }
 
         public ActionResult SachTheoNhaXuatBan(int id = 0)
+        public ActionResult SachTheoNhaXuatBan(int id)
         {
             var sach = data.SACHes.Where(s => s.NhaXuatBanID == id).ToList();
             return View(sach);
